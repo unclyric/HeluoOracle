@@ -1,0 +1,2756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>河洛天衍</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', 'SimHei', sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #ffffff; margin-bottom: 5px; font-size: 2em; letter-spacing: 8px; }
+        h2 { color: #ffffff; margin: 15px 0 10px; border-bottom: 1px solid #444; padding-bottom: 5px; }
+
+        /* 输入区域 */
+        .input-section { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-bottom: 20px; margin-top: 20px; }
+        .input-row { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-bottom: 15px; }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { color: #999; margin-bottom: 5px; font-size: 14px; }
+        .input-group input, .input-group select { padding: 8px 12px; border: 1px solid #444; border-radius: 5px; background: #1a1a1a; color: #e0e0e0; font-size: 14px; }
+        .input-group input[type="time"] { padding: 8px 12px; border: 1px solid #444; border-radius: 5px; background: #1a1a1a; color: #e0e0e0; font-size: 14px; }
+        .btn { padding: 10px 25px; background: #ffffff; border: none; border-radius: 5px; color: #000000; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s; }
+        .btn:hover { background: #cccccc; transform: translateY(-2px); }
+        .btn-secondary { background: #333; color: #fff; }
+        .btn-secondary:hover { background: #555; }
+
+        /* 真太阳时提示框 */
+        .solar-time-info { background: #1a1a1a; border: 1px solid #333; border-radius: 5px; padding: 8px; margin-top: 10px; font-size: 13px; color: #999; }
+
+        /* 命盘区域 */
+        .chart-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .chart-container { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 15px; }
+
+        /* 十二宫格 */
+        .zwds-chart { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 2px; width: 100%; max-width: 500px; margin: 0 auto; }
+        .palace { border: 1px solid #444; padding: 8px; text-align: center; background: #111; min-height: 120px; position: relative; }
+        .palace.ming { background: #1a1a1a; border-color: #fff; }
+        .palace-title { font-size: 12px; color: #999; margin-bottom: 5px; font-weight: bold; }
+        .palace-stars { font-size: 11px; line-height: 1.4; }
+        .star-main { color: #ffffff; font-weight: bold; }
+        .star-good { color: #cccccc; }
+        .star-bad { color: #888888; }
+        .star-four { font-weight: bold; }
+        .star-ke { color: #aaaaff; }
+        .star-quan { color: #cccccc; }
+        .star-lu { color: #aaaaaa; }
+        .star-ji { color: #ff6666; }
+
+        /* 宫位位置 */
+        .p1 { grid-column: 4; grid-row: 1; }
+        .p2 { grid-column: 3; grid-row: 1; }
+        .p3 { grid-column: 2; grid-row: 1; }
+        .p4 { grid-column: 1; grid-row: 1; }
+        .p5 { grid-column: 1; grid-row: 2; }
+        .p6 { grid-column: 1; grid-row: 3; }
+        .p7 { grid-column: 1; grid-row: 4; }
+        .p8 { grid-column: 2; grid-row: 4; }
+        .p9 { grid-column: 3; grid-row: 4; }
+        .p10 { grid-column: 4; grid-row: 4; }
+        .p11 { grid-column: 4; grid-row: 3; }
+        .p12 { grid-column: 4; grid-row: 2; }
+        .center-info { grid-column: 2/4; grid-row: 2/4; background: #0a0a0a; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 12px; }
+
+        /* 解读区域 */
+        .interpretation { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 15px; margin-top: 20px; margin-bottom: 20px; }
+        .interpretation-section { margin-bottom: 15px; }
+        .interpretation-title { color: #ffffff; font-size: 16px; margin-bottom: 8px; }
+        .interpretation-content { font-size: 14px; line-height: 1.6; color: #ccc; }
+        .good-text { color: #ffffff; font-weight: bold; }
+        .bad-text { color: #ff6666; }
+        .pattern-found { background: #1a1a1a; padding: 8px; border-radius: 5px; margin: 5px 0; border-left: 3px solid #fff; }
+
+        /* 小六壬 */
+        .liuren-section { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-top: 20px; margin-bottom: 20px; }
+        .liuren-result { font-size: 18px; text-align: center; padding: 20px; background: #111; border: 1px solid #333; border-radius: 8px; margin-top: 15px; }
+
+        /* 六爻起卦 */
+        .liuyao-section { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-top: 20px; margin-bottom: 20px; }
+        .coin-area { display: flex; justify-content: center; gap: 30px; margin: 20px 0; flex-wrap: wrap; }
+        .coin { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; transition: all 0.3s; border: 3px solid #444; user-select: none; }
+        .coin.head { background: #1a1a1a; color: #fff; border-color: #666; }
+        .coin.tail { background: #fff; color: #000; border-color: #fff; }
+        .coin:hover { transform: scale(1.1); }
+        .yao-record { display: flex; flex-direction: column-reverse; align-items: center; gap: 4px; margin: 15px 0; }
+        .yao-line { display: flex; align-items: center; gap: 10px; font-size: 14px; min-height: 28px; }
+        .yao-line .yao-symbol { font-family: monospace; font-size: 20px; letter-spacing: 4px; color: #fff; }
+        .yao-line .yao-label { color: #666; font-size: 12px; width: 50px; }
+        .yao-line .yao-type { color: #999; font-size: 12px; width: 40px; }
+        .yao-line.yin { }
+        .yao-line.yang { }
+        .yao-line.dong-yin .yao-symbol { color: #ff6666; }
+        .yao-line.dong-yang .yao-symbol { color: #ff6666; text-decoration: overline; }
+        .gua-result { text-align: center; padding: 20px; background: #111; border: 1px solid #333; border-radius: 8px; margin-top: 15px; }
+        .gua-name { font-size: 28px; color: #fff; margin-bottom: 10px; letter-spacing: 4px; }
+        .gua-symbol { font-size: 36px; margin: 10px 0; line-height: 1.2; }
+        .gua-detail { color: #999; font-size: 14px; line-height: 1.8; text-align: left; max-width: 500px; margin: 10px auto; }
+        .gua-detail b { color: #fff; }
+        .yao-progress { text-align: center; color: #666; margin: 10px 0; font-size: 14px; }
+
+        /* 八字排盘 */
+        .bazi-pillar { text-align:center;background:#141414;border:1px solid #333;border-radius:10px;padding:10px 14px;min-width:105px; }
+        .bazi-label { color:#666;font-size:11px;margin-bottom:4px;border-bottom:1px solid #222;padding-bottom:3px; }
+        .bazi-ganzhi { font-size:20px;font-weight:bold;margin:4px 0; }
+        .bazi-canggan { font-size:11px;color:#888;margin:2px 0; }
+        .bazi-shishen { font-size:11px;margin:2px 0;font-weight:bold; }
+        .bazi-nayin { color:#777;font-size:10px;margin:2px 0; }
+        .bazi-xingyun { font-size:10px;color:#999;margin:2px 0; }
+        .bazi-kongwang { font-size:10px;color:#ff6b6b;margin:2px 0; }
+        .bazi-zizuo { font-size:10px;color:#aaa;margin-top:4px;padding-top:3px;border-top:1px solid #222; }
+        .wuxing-mu { color:#4caf50; }
+        .wuxing-huo { color:#f44336; }
+        .wuxing-tu { color:#cd853f; }
+        .wuxing-jin { color:#ffd700; }
+        .wuxing-shui { color:#42a5f5; }
+        .bazi-shensha-row { display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:4px 0; }
+        .bazi-shensha-tag { font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid #333; }
+
+        /* 知识库 */
+        .knowledge-section { margin-top: 20px; margin-bottom: 20px; }
+        .knowledge-tabs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .knowledge-tab { padding: 8px 15px; background: #1a1a1a; border: 1px solid #444; border-radius: 5px; color: #999; cursor: pointer; }
+        .knowledge-tab.active { background: #fff; color: #000; border-color: #fff; }
+        .knowledge-content { background: #111; border: 1px solid #333; border-radius: 8px; padding: 15px; max-height: 400px; overflow-y: auto; }
+        .star-info { margin-bottom: 10px; padding: 10px; background: #1a1a1a; border-radius: 5px; }
+        .star-name { color: #fff; font-weight: bold; }
+
+        /* 今日面板 */
+        .today-panel { background:#111;border:1px solid #2a2a2a;border-radius:12px;padding:16px 20px;margin-bottom:20px; }
+        .today-pillar { display:flex;flex-direction:column;align-items:center;min-width:60px; }
+        .today-pillar-label { font-size:10px;color:#555;margin-bottom:2px; }
+        .today-pillar-gan { font-size:20px;font-weight:bold; }
+        .today-pillar-zhi { font-size:16px;margin-bottom:1px; }
+        .today-pillar-wx { font-size:10px;color:#777; }
+
+        /* 奇门遁甲 */
+        .qimen-grid { display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3px;max-width:600px;margin:0 auto; }
+        .qimen-cell { background:#0d0d0d;border:1px solid #333;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.5;min-height:130px; }
+        .qimen-cell .qm-palace { color:#888;font-size:13px;margin-bottom:4px;border-bottom:1px solid #1a1a1a;padding-bottom:3px;width:100%;text-align:center; }
+        .qimen-cell .qm-dp { font-size:14px;margin:2px 0; }
+        .qimen-cell .qm-star { color:#ffd700;font-size:15px;font-weight:bold;margin:1px 0; }
+        .qimen-cell .qm-door { font-size:14px;font-weight:bold;margin:1px 0; }
+        .qimen-cell .qm-spirit { color:#87ceeb;font-size:12px;margin:1px 0; }
+        .qimen-cell .qm-ag { color:#999;font-size:12px;margin:1px 0; }
+        .qimen-cell .qm-jx { color:#c77dff;font-size:12px;margin:1px 0; }
+        .qimen-cell .qm-jxrm { color:#5b8def;font-size:12px;margin:1px 0; }
+        .qimen-cell .qm-kw { color:#ff6b6b;font-size:12px;margin:1px 0; }
+        .qimen-cell .qm-ma { color:#4caf50;font-size:12px;margin:1px 0; }
+
+        /* 状态栏 */
+        .status-bar { display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;background:#111;border:1px solid #2a2a2a;border-radius:10px;padding:10px 18px;margin-bottom:16px;font-size:13px; }
+        .status-bar input[type="text"] { padding:6px 10px;border:1px solid #444;border-radius:5px;background:#1a1a1a;color:#e0e0e0;font-size:13px;width:140px; }
+        .status-bar input[type="number"] { padding:6px 8px;border:1px solid #444;border-radius:5px;background:#1a1a1a;color:#e0e0e0;font-size:13px;width:70px; }
+        .status-bar label { color:#999;font-size:12px;white-space:nowrap; }
+        .status-bar .solar-time-display { color:#ffd700;font-size:15px;font-weight:bold;min-width:50px;text-align:center; }
+        .btn-refresh { background:none;border:1px solid #444;border-radius:50%;color:#999;cursor:pointer;font-size:16px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:all 0.3s; }
+        .btn-refresh:hover { color:#fff;border-color:#fff;transform:rotate(180deg); }
+        .btn-refresh:active { transform:rotate(360deg); }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .chart-section { grid-template-columns: 1fr; }
+            .zwds-chart { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>河洛天衍</h1>
+        <p style="text-align:center;color:#87ceeb;margin-bottom:5px;font-size:14px;letter-spacing:4px;">大道五十 天衍四九</p>
+        <p style="text-align:center;color:#87ceeb;margin-bottom:20px;">By Roseric</p>
+
+        <!-- 今日日期面板 -->
+        <div class="today-panel" id="todayPanel">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;">
+                <div style="display:flex;align-items:center;gap:10px;min-width:200px;">
+                    <div>
+                        <div style="font-size:18px;color:#fff;margin-bottom:4px;" id="todaySolar"></div>
+                        <div style="font-size:14px;color:#aaa;" id="todayLunar"></div>
+                    </div>
+                    <button class="btn-refresh" onclick="updateTodayPanel()" title="刷新当前时间" style="flex-shrink:0;">&#x21bb;</button>
+                </div>
+                <div style="display:flex;gap:20px;flex-wrap:wrap;" id="todayPillars"></div>
+            </div>
+        </div>
+
+        <!-- 小六壬 -->
+        <div class="liuren-section">
+            <h2>小六壬速断</h2>
+            <p style="color:#aaa;font-size:13px;">以当下心血来潮之时测算单件事情，按农历月日时推算</p>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>农历月</label>
+                    <select id="lrMonth"></select>
+                </div>
+                <div class="input-group">
+                    <label>农历日</label>
+                    <select id="lrDay"></select>
+                </div>
+                <div class="input-group">
+                    <label>时辰序号(1-12)</label>
+                    <select id="lrHour"></select>
+                </div>
+                <button class="btn btn-secondary" onclick="calcLiuren()">测算</button>
+                <button class="btn btn-secondary" onclick="setNowTime()">取当前时间</button>
+            </div>
+            <div class="liuren-result" id="liurenResult"></div>
+        </div>
+
+        <!-- 六爻铜钱起卦 -->
+        <div class="liuyao-section">
+            <h2>六爻铜钱起卦</h2>
+            <p style="color:#666;font-size:13px;">心中默念所测之事，点击铜钱掷出，共六次成卦。字为背(3)，花为面(2)。</p>
+            <div class="yao-progress" id="yaoProgress">第 1 爻 / 共 6 爻（从下往上）</div>
+            <div class="coin-area">
+                <div class="coin head" id="coin1" onclick="flipCoin(0)">字</div>
+                <div class="coin head" id="coin2" onclick="flipCoin(1)">字</div>
+                <div class="coin head" id="coin3" onclick="flipCoin(2)">字</div>
+            </div>
+            <div style="text-align:center;margin:10px 0;">
+                <button class="btn" onclick="throwCoins()" id="throwBtn">掷铜钱</button>
+                <button class="btn btn-secondary" onclick="resetLiuyao()" style="margin-left:10px;">重新起卦</button>
+            </div>
+            <div class="yao-record" id="yaoRecord"></div>
+            <div class="gua-result" id="guaResult" style="display:none;"></div>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="input-section">
+            <h2>紫微斗数</h2>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>姓名</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input type="text" id="userName" placeholder="请输入姓名" style="padding:8px 12px;border:1px solid #444;border-radius:5px;background:#1a1a1a;color:#e0e0e0;font-size:14px;width:140px;">
+                        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;color:#999;font-size:13px;white-space:nowrap;">
+                            <input type="checkbox" id="isAnonymous"> 匿名
+                        </label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>性别</label>
+                    <select id="gender">
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>出生年（公历）</label>
+                    <select id="birthYear"></select>
+                </div>
+                <div class="input-group">
+                    <label>出生月（公历）</label>
+                    <select id="birthMonth">
+                        <option value="1">1月</option>
+                        <option value="2">2月</option>
+                        <option value="3">3月</option>
+                        <option value="4">4月</option>
+                        <option value="5">5月</option>
+                        <option value="6">6月</option>
+                        <option value="7">7月</option>
+                        <option value="8">8月</option>
+                        <option value="9">9月</option>
+                        <option value="10">10月</option>
+                        <option value="11">11月</option>
+                        <option value="12">12月</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>出生日（公历）</label>
+                    <select id="birthDay"></select>
+                </div>
+                <div class="input-group">
+                    <label>出生时间</label>
+                    <input type="time" id="birthTime" value="12:00">
+                </div>
+                <div class="input-group">
+                    <label>出生地</label>
+                    <select id="birthPlace"></select>
+                </div>
+            </div>
+            <div id="solarTimeInfo" class="solar-time-info" style="display:none;"></div>
+            <button class="btn" onclick="generateChart()">排盘并解读</button>
+            <button class="btn btn-secondary" onclick="calcBazi()" style="margin-left:10px;">排八字</button>
+
+            <!-- 手动输入真太阳时 -->
+            <div style="margin-top:15px;padding-top:15px;border-top:1px solid #333;">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>真太阳时（手动输入）</label>
+                        <input type="time" id="manualSolarTime" value="12:00">
+                    </div>
+                    <div class="input-group" style="justify-content:flex-end;">
+                        <button class="btn btn-secondary" onclick="generateChart(true)" style="margin-top:18px;">直接用真太阳时排盘</button>
+                    </div>
+                </div>
+                <p style="color:#666;font-size:12px;margin-top:5px;">如果已知真太阳时，可直接输入跳过自动计算。仍需填写上方公历生辰用于排盘。</p>
+            </div>
+        </div>
+
+        <!-- 命盘区域 -->
+        <div class="chart-section" id="chartSection" style="display:none;">
+            <!-- 命盘图 -->
+            <div class="chart-container">
+                <h2>命盘</h2>
+                <div class="zwds-chart" id="zwdsChart"></div>
+            </div>
+
+            <!-- 基本信息 -->
+            <div class="chart-container">
+                <h2>基本信息</h2>
+                <div id="basicInfo"></div>
+            </div>
+        </div>
+
+        <!-- 解读区域 -->
+        <div class="interpretation" id="interpretationSection" style="display:none;">
+            <h2>命盘解读</h2>
+            <div id="interpretationContent"></div>
+        </div>
+
+        <!-- 格局识别 -->
+        <div class="interpretation" id="patternSection" style="display:none;">
+            <h2>格局识别</h2>
+            <div id="patternContent"></div>
+        </div>
+
+        <!-- 知识库 -->
+        <div class="knowledge-section">
+            <h2>知识库参考</h2>
+            <div class="knowledge-tabs">
+                <button class="knowledge-tab active" onclick="showKnowledge('stars')">星辰详解</button>
+                <button class="knowledge-tab" onclick="showKnowledge('palaces')">十二宫详解</button>
+                <button class="knowledge-tab" onclick="showKnowledge('patterns')">格局详解</button>
+                <button class="knowledge-tab" onclick="showKnowledge('four')">四化详解</button>
+            </div>
+            <div class="knowledge-content" id="knowledgeContent"></div>
+        </div>
+
+        <!-- 八字排盘 -->
+        <div class="input-section" id="baziInputSection">
+            <h2>八字排盘</h2>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>姓名</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input type="text" id="baziUserName" placeholder="请输入姓名" style="padding:8px 12px;border:1px solid #444;border-radius:5px;background:#1a1a1a;color:#e0e0e0;font-size:14px;width:120px;">
+                        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;color:#999;font-size:13px;white-space:nowrap;">
+                            <input type="checkbox" id="baziIsAnonymous"> 匿名
+                        </label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>性别</label>
+                    <select id="baziGender">
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>出生年（公历）</label>
+                    <select id="baziBirthYear"></select>
+                </div>
+                <div class="input-group">
+                    <label>出生月（公历）</label>
+                    <select id="baziBirthMonth">
+                        <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+                        <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
+                        <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+                        <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>出生日（公历）</label>
+                    <select id="baziBirthDay"></select>
+                </div>
+                <div class="input-group">
+                    <label>出生时间</label>
+                    <input type="time" id="baziBirthTime" value="12:00">
+                </div>
+                <div class="input-group">
+                    <label>出生地</label>
+                    <select id="baziBirthPlace"></select>
+                </div>
+                <div class="input-group">
+                    <label>真太阳时</label>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <input type="time" id="baziSolarTime" value="12:00" style="padding:8px 12px;border:1px solid #444;border-radius:5px;background:#1a1a1a;color:#e0e0e0;font-size:14px;width:130px;">
+                        <button class="btn btn-secondary" onclick="autoCalcBaziSolarTime()" style="font-size:12px;padding:6px 10px;white-space:nowrap;">自动计算</button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn" onclick="calcBazi()">排八字</button>
+        </div>
+        <div class="interpretation" id="baziResultSection" style="display:none;">
+            <h2>八字排盘</h2>
+            <div id="baziPillars" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:15px 0;"></div>
+            <div id="baziShensha" style="margin-top:12px;"></div>
+            <div id="baziDetail" style="color:#aaa;font-size:13px;text-align:center;margin-top:10px;"></div>
+        </div>
+
+        <!-- 奇门遁甲 -->
+        <div class="liuyao-section" id="qimenSection">
+            <h2>奇门遁甲 <span style="font-size:12px;color:#666;font-weight:normal;">排盘方式：转盘+置闰，寄宫坤宫，暗干值使门起</span></h2>
+            <div class="status-bar">
+                <label>事项</label>
+                <input type="text" id="qimenMatter" placeholder="选填">
+                <label>经度</label>
+                <input type="number" id="qimenLongitude" value="120" step="0.1" min="0" max="180" style="width:65px;" onchange="refreshQimenTime()">
+                <span style="color:#888;">°E</span>
+                <button class="btn-refresh" onclick="getQimenLocation()" title="一键获取当前位置经纬度" style="border-radius:6px;width:auto;padding:0 8px;font-size:11px;">📍</button>
+                <label>真太阳时</label>
+                <span class="solar-time-display" id="qimenSolarTime">--:--</span>
+                <button class="btn-refresh" onclick="refreshQimenTime()" title="刷新当前真太阳时">&#x21bb;</button>
+            </div>
+            <div style="text-align:center;margin-bottom:12px;">
+                <button class="btn" onclick="paiQiMen()">开始排盘</button>
+            </div>
+            <div id="qimenResult" style="display:none;">
+                <div id="qimenInfo" style="color:#ffd700;font-size:14px;text-align:center;margin-bottom:12px;"></div>
+                <div class="qimen-grid" id="qimenGrid"></div>
+                <div id="qimenLegend" style="margin-top:12px;text-align:center;font-size:12px;color:#666;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ==================== 城市经度数据 ====================
+    const CITY_LONGITUDE = {
+        '北京': 116.4, '天津': 117.2, '上海': 121.5, '重庆': 106.5,
+        '石家庄': 114.5, '太原': 112.5, '呼和浩特': 111.7, '沈阳': 123.4,
+        '长春': 125.3, '哈尔滨': 126.6, '南京': 118.8, '杭州': 120.2,
+        '合肥': 117.3, '福州': 119.3, '南昌': 115.9, '济南': 117.0,
+        '郑州': 113.7, '武汉': 114.3, '长沙': 113.0, '广州': 113.3,
+        '南宁': 108.3, '海口': 110.3, '成都': 104.1, '贵阳': 106.7,
+        '昆明': 102.7, '拉萨': 91.1, '西安': 108.9, '兰州': 103.8,
+        '西宁': 101.8, '银川': 106.3, '乌鲁木齐': 87.6, '台北': 121.5,
+        '香港': 114.2, '澳门': 113.5
+    };
+
+    // ==================== 农历公历转换（朔望月 + 春节锚点） ====================
+    // 春节（农历正月初一）对应的公历日期 [月, 日]
+    const CHUNJIE = {
+        1920:[2,20],1921:[2,8],1922:[1,28],1923:[2,16],1924:[2,5],1925:[1,24],
+        1926:[2,13],1927:[2,2],1928:[1,23],1929:[2,10],1930:[1,30],1931:[2,17],
+        1932:[2,6],1933:[1,26],1934:[2,14],1935:[2,4],1936:[1,24],1937:[2,11],
+        1938:[1,31],1939:[2,19],1940:[2,8],1941:[1,27],1942:[2,15],1943:[2,5],
+        1944:[1,25],1945:[2,13],1946:[2,2],1947:[1,22],1948:[2,10],1949:[1,29],
+        1950:[2,17],1951:[2,6],1952:[1,27],1953:[2,14],1954:[2,3],1955:[1,24],
+        1956:[2,12],1957:[1,31],1958:[2,18],1959:[2,8],1960:[1,28],1961:[2,15],
+        1962:[2,5],1963:[1,25],1964:[2,13],1965:[2,2],1966:[1,21],1967:[2,9],
+        1968:[1,30],1969:[2,17],1970:[2,6],1971:[1,27],1972:[2,15],1973:[2,3],
+        1974:[1,23],1975:[2,11],1976:[1,31],1977:[2,18],1978:[2,7],1979:[1,28],
+        1980:[2,16],1981:[2,5],1982:[1,25],1983:[2,13],1984:[2,2],1985:[2,20],
+        1986:[2,9],1987:[1,29],1988:[2,17],1989:[2,6],1990:[1,27],1991:[2,15],
+        1992:[2,4],1993:[1,23],1994:[2,10],1995:[1,31],1996:[2,19],1997:[2,7],
+        1998:[1,28],1999:[2,16],2000:[2,5],2001:[1,24],2002:[2,12],2003:[2,1],
+        2004:[1,22],2005:[2,9],2006:[1,29],2007:[2,18],2008:[2,7],2009:[1,26],
+        2010:[2,14],2011:[2,3],2012:[1,23],2013:[2,10],2014:[1,31],2015:[2,19],
+        2016:[2,8],2017:[1,28],2018:[2,16],2019:[2,5],2020:[1,25],2021:[2,12],
+        2022:[2,1],2023:[1,22],2024:[2,10],2025:[1,29],2026:[2,17],2027:[2,6],
+        2028:[1,26],2029:[2,13],2030:[2,3]
+    };
+
+    // 已知的闰月数据 [闰月序号, 0=无闰月]
+    const LEAP_MONTH = {
+        2017:6, 2020:4, 2023:2, 2025:6, 2028:5
+    };
+
+    // 构建农历年月表：返回 {numMonths, leapMonth, monthStartsDOY[]}
+    // monthStartsDOY[m] = 第m个月（0-based）起始日距离本公历年1月1日的天数
+    function buildLunarMonths(lunarYear) {
+        let cj = CHUNJIE[lunarYear];
+        if (!cj) cj = [2, 1];
+        let cjDOY = dayOfYear(cj[0], cj[1], lunarYear);
+
+        let nextCj = CHUNJIE[lunarYear + 1];
+        if (!nextCj) nextCj = [2, 1];
+        let doy1 = dayOfYear(nextCj[0], nextCj[1], lunarYear + 1);
+        // 将次年春节统一到以lunarYear年初为起点的偏移
+        let daysInYear = isLeapYear(lunarYear) ? 366 : 365;
+        let nextCjOffset = doy1;
+        if (nextCjOffset <= cjDOY) nextCjOffset += daysInYear;
+
+        // 两个春节之间的天数
+        let daysBetween = nextCjOffset - cjDOY;
+
+        // 朔望月约29.53天，根据间隔判断月数
+        const SYNODIC = 29.530588;
+        let numMonths = Math.round(daysBetween / SYNODIC);
+        numMonths = Math.max(12, Math.min(13, numMonths));
+
+        let leapMonth = LEAP_MONTH[lunarYear] || 0;
+
+        // 按月均间隔均匀分配每个月的起始日（从正月初一开始）
+        let avgLen = daysBetween / numMonths;
+        let monthStartsDOY = [];
+        for (let m = 0; m < numMonths; m++) {
+            monthStartsDOY.push(cjDOY + Math.round(m * avgLen));
+        }
+
+        return { numMonths, leapMonth, monthStartsDOY, cjDOY, daysBetween };
+    }
+
+    // 农历 → 公历（精确版）
+    function lunarToSolarApprox(lunarYear, lunarMonth, lunarDay) {
+        let lm = buildLunarMonths(lunarYear);
+        let mIdx = lunarMonth - 1;
+        if (mIdx >= lm.numMonths) mIdx = lm.numMonths - 1;
+
+        let startDOY = lm.monthStartsDOY[mIdx];
+        let totalDOY = startDOY + (lunarDay - 1);
+
+        let daysInYear = isLeapYear(lunarYear) ? 366 : 365;
+        let solarYear = lunarYear;
+        if (totalDOY > daysInYear) {
+            totalDOY -= daysInYear;
+            solarYear = lunarYear + 1;
+        }
+
+        let mDays = [31, isLeapYear(solarYear) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        let m = 0;
+        while (m < 12 && totalDOY > mDays[m]) {
+            totalDOY -= mDays[m];
+            m++;
+        }
+        return { solarYear, solarMonth: m + 1, solarDay: Math.max(1, Math.round(totalDOY)) };
+    }
+
+    // 公历 → 农历（精确版）
+    function solarToLunarApprox(solarYear, solarMonth, solarDay) {
+        let solarDOY = dayOfYear(solarMonth, solarDay, solarYear);
+
+        // 确定农历年
+        let cj = CHUNJIE[solarYear];
+        if (!cj) cj = [2, 1];
+        let cjDOY = dayOfYear(cj[0], cj[1], solarYear);
+
+        let lunarYear;
+        if (solarDOY >= cjDOY) {
+            lunarYear = solarYear;
+        } else {
+            lunarYear = solarYear - 1;
+        }
+
+        let lm = buildLunarMonths(lunarYear);
+        let refDOY = lm.cjDOY;
+
+        // 将 solarDOY 统一到以 lunarYear 年初为基准
+        let targetDOY = solarDOY;
+        if (lunarYear < solarYear) {
+            let prevYearDays = isLeapYear(lunarYear) ? 366 : 365;
+            targetDOY += prevYearDays;
+        }
+
+        // 在 monthStartsDOY 中二分查找
+        let lunarMonth = 1;
+        let isLeap = false;
+        for (let m = lm.numMonths - 1; m >= 0; m--) {
+            if (targetDOY >= lm.monthStartsDOY[m]) {
+                // 判断是否为闰月
+                if (lm.leapMonth > 0 && m > lm.leapMonth) {
+                    lunarMonth = m; // 闰月后的月序号需调整
+                } else if (lm.leapMonth > 0 && m === lm.leapMonth) {
+                    isLeap = true;
+                    lunarMonth = lm.leapMonth;
+                } else {
+                    lunarMonth = m + 1;
+                }
+                break;
+            }
+        }
+
+        let lunarDay = targetDOY - lm.monthStartsDOY[lunarMonth - 1] + 1;
+        if (lunarDay < 1) lunarDay = 1;
+        if (lunarDay > 30) lunarDay = 30;
+
+        return { lunarYear, lunarMonth, lunarDay, isLeap };
+    }
+
+    // ==================== 真太阳时计算 ====================
+    // 计算一年中的第几天（用于均时差公式）
+    function isLeapYear(y) {
+        return (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);
+    }
+
+    function dayOfYear(month, day, year) {
+        const days = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        let n = day;
+        for (let i = 0; i < month - 1; i++) {
+            n += days[i];
+        }
+        return n;
+    }
+
+    function calcTrueSolarTime(beijingTimeStr, cityLongitude, month, day, year) {
+        // 解析北京时间
+        let parts = beijingTimeStr.split(':');
+        let beijingHour = parseInt(parts[0]);
+        let beijingMinute = parseInt(parts[1]);
+
+        // 计算一年中的第几天
+        // 使用传入的公历月日，若无则使用当前日期
+        let n;
+        let solarYear = year;
+        if (month && day) {
+            n = dayOfYear(month, day, year || new Date().getFullYear());
+        } else {
+            // 使用当前日期来近似
+            let now = new Date();
+            n = dayOfYear(now.getMonth() + 1, now.getDate(), now.getFullYear());
+            solarYear = now.getFullYear();
+        }
+
+        // ===== 均时差 EoT =====
+        // E = 9.87 * sin(2B) - 7.53 * cos(B) - 1.5 * sin(B)
+        // B = 360 * (n - 81) / 364
+        let B = (360 * (n - 81)) / 364;
+        let BRad = B * Math.PI / 180;
+        let eot =
+            9.87 * Math.sin(2 * BRad)
+            - 7.53 * Math.cos(BRad)
+            - 1.5 * Math.sin(BRad);
+
+        // ===== 经度修正 =====
+        let longitudeCorrectionMinutes = (cityLongitude - 120) * 4;
+
+        // ===== 真太阳时（分钟） =====
+        let totalMinutes =
+            beijingHour * 60
+            + beijingMinute
+            + longitudeCorrectionMinutes
+            + eot;
+
+        // ===== 转回时分 =====
+        let trueHour = Math.floor(totalMinutes / 60);
+        let trueMinute = Math.round(totalMinutes % 60);
+
+        // 处理负数和进位
+        if (trueMinute < 0) {
+            trueMinute += 60;
+            trueHour -= 1;
+        }
+        if (trueMinute >= 60) {
+            trueMinute -= 60;
+            trueHour += 1;
+        }
+        if (trueHour < 0) {
+            trueHour += 24;
+        }
+        if (trueHour >= 24) {
+            trueHour -= 24;
+        }
+
+        return {
+            beijingTime: beijingTimeStr,
+            trueSolarTime: String(trueHour).padStart(2, '0') + ':' + String(trueMinute).padStart(2, '0'),
+            eotMinutes: eot.toFixed(2),
+            longitudeCorrection: longitudeCorrectionMinutes.toFixed(2),
+            totalDiffMinutes: (longitudeCorrectionMinutes + eot).toFixed(2)
+        };
+    }
+
+    // 根据真太阳时计算时辰（返回时辰索引 0-11）
+    // 0=子, 1=丑, 2=寅, ..., 11=亥
+    function getShiChenFromTime(timeStr) {
+        let parts = timeStr.split(':');
+        let hour = parseInt(parts[0]);
+        let minute = parseInt(parts[1]);
+        let totalMinutes = hour * 60 + minute;
+
+        // 子时: 23:00-0:59 (早子时 0:00-0:59, 晚子时 23:00-23:59)
+        // 丑时: 1:00-2:59
+        // 寅时: 3:00-4:59
+        // 卯时: 5:00-6:59
+        // 辰时: 7:00-8:59
+        // 巳时: 9:00-10:59
+        // 午时: 11:00-12:59
+        // 未时: 13:00-14:59
+        // 申时: 15:00-16:59
+        // 酉时: 17:00-18:59
+        // 戌时: 19:00-20:59
+        // 亥时: 21:00-22:59
+
+        if (totalMinutes >= 23 * 60 || totalMinutes < 1 * 60) return 0;  // 子时
+        if (totalMinutes >= 1 * 60 && totalMinutes < 3 * 60) return 1;   // 丑时
+        if (totalMinutes >= 3 * 60 && totalMinutes < 5 * 60) return 2;   // 寅时
+        if (totalMinutes >= 5 * 60 && totalMinutes < 7 * 60) return 3;   // 卯时
+        if (totalMinutes >= 7 * 60 && totalMinutes < 9 * 60) return 4;   // 辰时
+        if (totalMinutes >= 9 * 60 && totalMinutes < 11 * 60) return 5;  // 巳时
+        if (totalMinutes >= 11 * 60 && totalMinutes < 13 * 60) return 6; // 午时
+        if (totalMinutes >= 13 * 60 && totalMinutes < 15 * 60) return 7; // 未时
+        if (totalMinutes >= 15 * 60 && totalMinutes < 17 * 60) return 8; // 申时
+        if (totalMinutes >= 17 * 60 && totalMinutes < 19 * 60) return 9; // 酉时
+        if (totalMinutes >= 19 * 60 && totalMinutes < 21 * 60) return 10; // 戌时
+        if (totalMinutes >= 21 * 60 && totalMinutes < 23 * 60) return 11; // 亥时
+        return 0;
+    }
+
+    // 判断是否为早子时（0:00-0:59），早子时日子按第二天算
+    function isEarlyZiHour(timeStr) {
+        let parts = timeStr.split(':');
+        let hour = parseInt(parts[0]);
+        let minute = parseInt(parts[1]);
+        return (hour === 0);
+    }
+
+    // ==================== 知识数据库 ====================
+    const KNOWLEDGE = {
+        // 星辰详解
+        stars: {
+            // 紫微系
+            '紫微': { type: '主星', system: '紫微系', nature: '帝星', meaning: '代表文武官带、贵人、正财，解厄制化。命宫有紫微无辅星为僧道或孤独。女命紫微独在福德宫主一世孤单。', phase: '庙旺皆吉' },
+            '天机': { type: '主星', system: '紫微系', nature: '文官', meaning: '代表文官带（公务员、教师、银行），正财。坐命面相：肤黑、个矮、体格壮、机灵。', phase: '庙旺利文职' },
+            '太阳': { type: '主星', system: '紫微系', nature: '武官', meaning: '代表武官带（军人、警察、外交官、法官），贵人，解厄，财禄。代表父亲、丈夫、儿子。坐命面相：红光满面、圆脸、中等身材。', phase: '庙旺吉，落陷辛苦' },
+            '武曲': { type: '主星', system: '紫微系', nature: '财星王', meaning: '代表武官带，解厄，财星王，贵人。坐命面相：个性火爆过得快，身材五短且壮主富贵。', phase: '庙旺大富' },
+            '天同': { type: '主星', system: '紫微系', nature: '人和', meaning: '代表人和、解厄。治天下：天时>地利>人和；平天下：人和>地利>天时。', phase: '庙旺感情好' },
+            '廉贞': { type: '主星', system: '紫微系', nature: '次桃花', meaning: '次桃花，武官带。坐命面相：迷迷眼，见到美女未言先笑，长相清秀。廉贞七杀同宫庙旺积富，落陷横死。', phase: '庙旺清廉，落陷凶' },
+            // 天府系
+            '天府': { type: '主星', system: '天府系', nature: '南斗星君', meaning: '个性温和，文官带或教星，心眼多。不可解厄制化，需三台八座才可。', phase: '庙旺皆吉' },
+            '太阴': { type: '主星', system: '天府系', nature: '财星', meaning: '在子丑亥最好，女子太阴坐命很漂亮，文官带，正财。代表母亲、妻子、女儿。', phase: '庙旺富美，落陷辛苦' },
+            '天梁': { type: '主星', system: '天府系', nature: '食神', meaning: '食神（口福），文武双全官带。坐命男相：英俊潇洒，长得精壮。', phase: '庙旺官禄' },
+            '天相': { type: '主星', system: '天府系', nature: '佐才', meaning: '佐才星（秘书、助理、参谋）。入命：长相瘦高，为人厚道、脾气温和。', phase: '庙旺辅佐之才' },
+            '七杀': { type: '主星', system: '天府系', nature: '武官', meaning: '武官带。入命面相：目大、性急、多疑。个性刚强，宜武官。七杀朝斗格：将星入命，威震边疆。', phase: '庙旺武贵，落陷凶' },
+            '破军': { type: '主星', system: '天府系', nature: '武官', meaning: '武官带。入命面相：孤僻、体瘦、不重利。破军居子午英星入庙成格，发武官。', phase: '庙旺武职，落陷破耗' },
+            '贪狼': { type: '主星', system: '天府系', nature: '桃花财星', meaning: '主桃花星，酒色财气赌。入命：身材魁梧，毛发多。在水宫才为桃花星，在午为武官星。火贪相聚为火贵格。', phase: '庙旺财桃花，落陷凶' },
+            // 六吉星
+            '左辅': { type: '吉星', system: '六吉', nature: '辅佐', meaning: '辅助紫微星。单星独守有人的宫主孤独。', phase: '吉' },
+            '右弼': { type: '吉星', system: '六吉', nature: '辅佐', meaning: '辅助紫微星。单星独守有人的宫主孤独。', phase: '吉' },
+            '天魁': { type: '吉星', system: '六吉', nature: '科甲', meaning: '科甲星，主科甲顺利，贵人。', phase: '吉' },
+            '天钺': { type: '吉星', system: '六吉', nature: '科甲', meaning: '科甲星，主科甲顺利，贵人。', phase: '吉' },
+            '文昌': { type: '吉星', system: '六吉', nature: '科甲', meaning: '主科甲，读书考试。文昌坐命无文曲来会学而不思书呆子。文昌文曲同宫男子文采风流，女子为桃花。', phase: '庙旺科甲' },
+            '文曲': { type: '吉星', system: '六吉', nature: '才艺', meaning: '主才艺，博学，多能，斯文。', phase: '庙旺才艺' },
+            // 六煞星
+            '擎羊': { type: '煞星', system: '六煞', nature: '小人血光', meaning: '主身边看不到的小人，疾病血光。落陷大凶。', phase: '落陷大凶' },
+            '陀罗': { type: '煞星', system: '六煞', nature: '小人血光', meaning: '主身边看不到的小人，疾病血光，开刀见血光。落陷大凶。', phase: '落陷大凶' },
+            '火星': { type: '煞星', system: '六煞', nature: '火厄口角', meaning: '流年遇到主火厄，个性冲突，口角。', phase: '庙旺可制，落陷凶' },
+            '铃星': { type: '煞星', system: '六煞', nature: '火厄口角', meaning: '流年遇到主火厄，个性冲突，口角。', phase: '庙旺可制，落陷凶' },
+            '天空': { type: '煞星', system: '六煞', nature: '耗财', meaning: '生意流年逢之必赔。', phase: '大凶' },
+            '地劫': { type: '煞星', system: '六煞', nature: '耗财', meaning: '生意流年逢之必赔。独守本宫或对宫均大凶。', phase: '大凶' },
+            // 其他
+            '禄存': { type: '财星', system: '其他', nature: '财', meaning: '财星，同化禄。禄存在命宫属守财奴型。禄马交驰辛苦赚大钱大富。', phase: '吉' },
+            '天马': { type: '驿马', system: '其他', nature: '动', meaning: '主奔波跑动。天马逢武官星代表事业有升迁，外地发展最好。', phase: '吉' },
+            '红鸾': { type: '桃花', system: '其他', nature: '婚喜', meaning: '主桃花，男命宫红鸾必招美妻，女命宫红鸾必有贵夫。流年在有人的宫可结婚。', phase: '吉' },
+            '天喜': { type: '桃花', system: '其他', nature: '婚喜', meaning: '主桃花，与红鸾同论。红鸾天喜交会在命宫夫妻宫很好。', phase: '吉' },
+            '巨门': { type: '凶星', system: '其他', nature: '口舌是非', meaning: '本身为凶星，代表口舌是非官司牢狱。庙旺代表口才好能言善道豪门宅第，落陷代表牢狱。化权为人师表声名远扬。', phase: '庙旺口才，落陷官司' },
+            '天刑': { type: '凶星', system: '其他', nature: '官司刑克', meaning: '代表是非官司刑克。', phase: '凶' },
+            '三台': { type: '辅星', system: '其他', nature: '辅天府', meaning: '辅助天府，天府有三台八座才可解厄制化。', phase: '吉' },
+            '八座': { type: '辅星', system: '其他', nature: '辅天府', meaning: '辅助天府，天府有三台八座才可解厄制化。', phase: '吉' }
+        },
+
+        // 十二宫详解
+        palaces: {
+            '命宫': { meaning: '先天命格，长相、个性、行为模式、一生成败。', related: '三方四正：财帛、迁移、官禄' },
+            '父母宫': { meaning: '父母情况，祖产。黯淡无光主庶出或螟蛉子。', related: '太阳代表父，太阴代表母' },
+            '福德宫': { meaning: '一生福禄、财禄、事业。夫妻宫好福德宫差代表夫妻不能长久。', related: '女命最重要，也代表夫妻宫' },
+            '田宅宫': { meaning: '祖产情况，置产吉凶。火星在内招火灾，官非星在内招官司。', related: '流年田宅化忌破祖业' },
+            '官禄宫': { meaning: '公家从政。最喜欢权星入宫。权星财星在一起代表财经行业主管。', related: '化权最好，化禄为贪官' },
+            '交友宫': { meaning: '仆役宫。多耗星或化忌合伙必败。多吉星贵星合伙大吉。', related: '小人定义：命中注定有小人' },
+            '迁移宫': { meaning: '外出发展。外地逢贵人或孤军奋战。', related: '身宫在迁移会去外地发展' },
+            '疾厄宫': { meaning: '只做参考。结合中医经脉流注看致命伤痛。煞星多在哪宫就知道哪方面疾病。', related: '肺寅大卯胃辰宫...' },
+            '财帛宫': { meaning: '私企从商。化科必有技术专长。', related: '财星进入财帛宫最好' },
+            '子女宫': { meaning: '子女情况。古人重视男丁为农耕劳作。宫中无主星看对宫。', related: '化忌无子' },
+            '夫妻宫': { meaning: '必须与福德宫一起看。廉贪或廉破入夫妻宫主生离或死别。', related: '女命太阳代表先生丈夫儿子' },
+            '兄弟宫': { meaning: '斗数来批六亲不太精准，需配合面相。化忌主兄弟不和或夭折或合伙破财。', related: '眉毛代表兄弟宫' }
+        },
+
+        // 格局详解
+        patterns: {
+            '紫府坐垣': { condition: '命宫在寅申，紫微天府入庙', meaning: '位列三台（将相），爵禄荣昌。', level: '大吉' },
+            '七杀朝斗': { condition: '命宫在寅申，七杀独坐入庙', meaning: '将星入命，威震边疆、爵禄荣昌。', level: '大吉' },
+            '巨日格': { condition: '巨门会太阳庙旺', meaning: '大生意人，巨富。落陷女命主偏房，男命喜怒无常表里不一。', level: '吉' },
+            '日月并明': { condition: '太阳太阴均庙旺', meaning: '主一世荣华。', level: '大吉' },
+            '日月反背': { condition: '太阳太阴均落陷', meaning: '工作披星戴月，六亲不靠，性情刚燥。女命辛苦劳累。', level: '凶' },
+            '半空折翅': { condition: '命宫在巳或亥，廉贪落陷对冲，或化忌冲命三方四正无吉星', meaning: '大限在中年30岁左右，中年横夭。', level: '大凶' },
+            '火贵格': { condition: '贪狼火星同宫', meaning: '武贵，作武官。', level: '吉' },
+            '明珠出海': { condition: '命宫在未，太阴在亥入庙，太阳在卯入庙', meaning: '父母双全，个性公正清明，逢科权禄主事业大利。', level: '吉' },
+            '月朗天门': { condition: '命宫在亥，太阴入命庙', meaning: '女命最吉，身材瘦细清秀眼大。十年大运逢之大好。', level: '大吉' },
+            '日照雷门': { condition: '命宫在卯，太阳入命庙', meaning: '男命最吉，女命热情如火。十年大运逢之大好。', level: '大吉' },
+            '雄宿朝元': { condition: '廉贞孤星独守入命，命在申或寅', meaning: '利军人商人做老板，后期毁在桃花上。', level: '吉' },
+            '英星入命': { condition: '破军星在子或午庙入命', meaning: '男命利武官威震边疆，女命身材瘦小个性孤僻。', level: '吉' },
+            '日月夹命': { condition: '命宫两侧太阳太阴均庙旺', meaning: '一世财禄无缺，一世荣华。', level: '大吉' },
+            '紫府夹权': { condition: '紫微天府在命宫两侧', meaning: '主有权势。', level: '吉' },
+            '羊陀夹杀': { condition: '擎羊陀罗在命宫两侧', meaning: '犯小人，容易被人影响。', level: '凶' },
+            '泛水桃花': { condition: '贪狼在亥子入命宫', meaning: '桃花命，女子声名远播。', level: '中性' },
+            '自杀格': { condition: '廉贪同宫落陷', meaning: '有自杀倾向。在哪个宫代表哪个宫的人有此倾向。', level: '大凶' },
+            '女身男命': { condition: '女命武官星坐命', meaning: '一生辛苦，主孤独。', level: '辛苦' },
+            '府相会命': { condition: '天府天相分别位于财帛事业宫与命宫三足鼎立', meaning: '天生辅佐之人才。', level: '吉' },
+            '禄马交驰': { condition: '禄存化禄与天马同宫', meaning: '辛苦赚大钱，大富。喜见文昌文曲减辛劳，不宜见火星铃星劳碌。', level: '大吉' }
+        },
+
+        // 四化详解
+        four: {
+            '化科': { meaning: '1.主科名（金榜题名、文笔优秀、才艺超群、为人师表）；2.声名远播。对商人代表有名气，对想考试的人大利。', position: '官禄宫最好，财帛宫代表技术专长' },
+            '化权': { meaning: '1.官印；2.性情刚直。不同位置意义不同。夫妻宫化权配偶性刚主见强；命宫化权先天领导之才。', position: '官禄宫最好' },
+            '化禄': { meaning: '1.钱财；2.櫃吝（守财奴）。父母宫父母从商会做生意；财帛宫自己会做生意；命宫天生祖业丰厚。', position: '财帛宫最好' },
+            '化忌': { meaning: '1.劫杀（官司、横祸、意外）；2.自身想不开。杀破廉贪落陷为恶煞。', position: '所在宫或对冲的宫十年事倍功半' }
+        }
+    };
+
+    // ==================== 排盘算法 ====================
+
+    // 天干
+    const TIANGAN = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+    // 地支
+    const DIZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+    // 十二宫名
+    const PALACES = ['命宫','父母','福德','田宅','官禄','交友','迁移','疾厄','财帛','子女','夫妻','兄弟'];
+    // 宫位对应地支（命宫位置决定）
+    const PALACE_DIZHI_MAP = {}; // 动态计算
+
+    // 五行局数表（纳音五行）
+    const WUXING_JU = {
+        '甲子': ['金',4], '乙丑': ['金',4], '丙寅': ['火',6], '丁卯': ['火',6], '戊辰': ['木',3], '己巳': ['木',3],
+        '庚午': ['土',5], '辛未': ['土',5], '壬申': ['金',4], '癸酉': ['金',4], '甲戌': ['火',6], '乙亥': ['火',6],
+        '丙子': ['水',2], '丁丑': ['水',2], '戊寅': ['土',5], '己卯': ['土',5], '庚辰': ['金',4], '辛巳': ['金',4],
+        '壬午': ['木',3], '癸未': ['木',3], '甲申': ['水',2], '乙酉': ['水',2], '丙戌': ['土',5], '丁亥': ['土',5],
+        '戊子': ['火',6], '己丑': ['火',6], '庚寅': ['木',3], '辛卯': ['木',3], '壬辰': ['水',2], '癸巳': ['水',2],
+        '甲午': ['金',4], '乙未': ['金',4], '丙申': ['火',6], '丁酉': ['火',6], '戊戌': ['木',3], '己亥': ['木',3],
+        '庚子': ['土',5], '辛丑': ['土',5], '壬寅': ['金',4], '癸卯': ['金',4], '甲辰': ['火',6], '乙巳': ['火',6],
+        '丙午': ['水',2], '丁未': ['水',2], '戊申': ['土',5], '己酉': ['土',5], '庚戌': ['金',4], '辛亥': ['金',4],
+        '壬子': ['木',3], '癸丑': ['木',3], '甲寅': ['水',2], '乙卯': ['水',2], '丙辰': ['土',5], '丁巳': ['土',5],
+        '戊午': ['火',6], '己未': ['火',6], '庚申': ['木',3], '辛酉': ['木',3], '壬戌': ['水',2], '癸亥': ['水',2]
+    };
+
+    // 获取年干支
+    function getGanZhiYear(year) {
+        let ganIndex = (year - 4) % 10;
+        let zhiIndex = (year - 4) % 12;
+        return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+    }
+
+    // 获取月干支（农历）
+    function getGanZhiMonth(year, month) {
+        let yearGan = (year - 4) % 10;
+        let monthGan = (yearGan * 2 + month) % 10;
+        let monthZhi = (month + 1) % 12; // 正月建寅
+        return TIANGAN[monthGan] + DIZHI[monthZhi];
+    }
+
+    // 获取日干支（简化计算，实际需要查表）
+    function getGanZhiDay(year, month, day) {
+        // 简化：使用近似算法
+        let baseDate = new Date(1900, 0, 31); // 1900年1月31日为甲子日
+        let targetDate = new Date(year, month - 1, day);
+        let diffDays = Math.floor((targetDate - baseDate) / (24 * 60 * 60 * 1000));
+        let ganIndex = diffDays % 10;
+        let zhiIndex = diffDays % 12;
+        if(ganIndex < 0) ganIndex += 10;
+        if(zhiIndex < 0) zhiIndex += 12;
+        return TIANGAN[ganIndex] + DIZHI[zhiIndex];
+    }
+
+    // 获取时干支
+    function getGanZhiHour(dayGan, hour) {
+        let dayGanIndex = TIANGAN.indexOf(dayGan);
+        let hourGanIndex = (dayGanIndex * 2 + hour) % 10;
+        return TIANGAN[hourGanIndex] + DIZHI[hour];
+    }
+
+    // 计算五行局数
+    function getJuNumber(yearGanZhi) {
+        return WUXING_JU[yearGanZhi] ? WUXING_JU[yearGanZhi][1] : 5;
+    }
+
+    // 计算命宫位置
+    function calcMingGongPos(month, hour) {
+        // 命宫公式：从寅宫起，顺数至月，再逆数至时
+        let pos = (month - 1 + hour) % 12; // 简化公式
+        // 实际：寅宫起正月，顺数到月，再逆数到时
+        // 寅=2，正月=寅，顺数到月的位置，然后逆数时辰数
+        let startPos = 2; // 寅宫索引
+        let monthPos = (startPos + month - 1) % 12;
+        let mingPos = (monthPos - hour + 12) % 12;
+        return mingPos;
+    }
+
+    // 计算身宫位置
+    function calcShenGongPos(month, hour) {
+        // 身宫公式：从寅宫起，顺数至月，再顺数至时
+        let startPos = 2;
+        let monthPos = (startPos + month - 1) % 12;
+        let shenPos = (monthPos + hour) % 12;
+        return shenPos;
+    }
+
+    // 安紫微星（核心算法）
+    function anZiweiStar(ju, day) {
+        // 紫微星位置由五行局数和出生日决定
+        // 公式：找到日数除局数的商和余数
+        let quotient = Math.floor(day / ju);
+        let remainder = day % ju;
+        if(remainder === 0) {
+            quotient--;
+            remainder = ju;
+        }
+
+        // 紫微星位置表（标准安星法：startPos + floor((day-1)/ju)）
+        const ZIWEI_POS = {
+            // 水二局 起寅(2)
+            2: {1:2,2:2,3:3,4:3,5:4,6:4,7:5,8:5,9:6,10:6,11:7,12:7,13:8,14:8,15:9,16:9,17:10,18:10,19:11,20:11,21:0,22:0,23:1,24:1,25:2,26:2,27:3,28:3,29:4,30:4},
+            // 木三局 起卯(3)
+            3: {1:3,2:3,3:3,4:4,5:4,6:4,7:5,8:5,9:5,10:6,11:6,12:6,13:7,14:7,15:7,16:8,17:8,18:8,19:9,20:9,21:9,22:10,23:10,24:10,25:11,26:11,27:11,28:0,29:0,30:0},
+            // 金四局 起辰(4)
+            4: {1:4,2:4,3:4,4:4,5:5,6:5,7:5,8:5,9:6,10:6,11:6,12:6,13:7,14:7,15:7,16:7,17:8,18:8,19:8,20:8,21:9,22:9,23:9,24:9,25:10,26:10,27:10,28:10,29:11,30:11},
+            // 土五局 起巳(5)
+            5: {1:5,2:5,3:5,4:5,5:5,6:6,7:6,8:6,9:6,10:6,11:7,12:7,13:7,14:7,15:7,16:8,17:8,18:8,19:8,20:8,21:9,22:9,23:9,24:9,25:9,26:10,27:10,28:10,29:10,30:10},
+            // 火六局 起午(6)
+            6: {1:6,2:6,3:6,4:6,5:6,6:6,7:7,8:7,9:7,10:7,11:7,12:7,13:8,14:8,15:8,16:8,17:8,18:8,19:9,20:9,21:9,22:9,23:9,24:9,25:10,26:10,27:10,28:10,29:10,30:10}
+        };
+
+        return ZIWEI_POS[ju][day] || 0;
+    }
+
+    // 安天府星（紫微在寅→天府在辰，紫微每移一宫天府同向移一宫）
+    function anTianfuPos(ziweiPos) {
+        return (ziweiPos + 2) % 12;
+    }
+
+    // 安十四主星
+    function anMainStars(ziweiPos, tianfuPos) {
+        const stars = {};
+
+        // 紫微系星辰位置（以紫微为基准）
+        const ZIWEI_SYSTEM = {
+            '紫微': 0,
+            '天机': -1,  // 紫微前一宫
+            '太阳': -3,  // 紫微前三宫
+            '武曲': -4,  // 紫微前四宫
+            '天同': -5,  // 紫微前五宫
+            '廉贞': -8   // 紫微前八宫
+        };
+
+        // 天府系星辰位置（以天府为基准）
+        const TIANFU_SYSTEM = {
+            '天府': 0,
+            '太阴': 1,   // 天府后一宫
+            '贪狼': 2,   // 天府后二宫
+            '巨门': 3,   // 天府后三宫
+            '天相': 4,   // 天府后四宫
+            '天梁': 5,   // 天府后五宫
+            '七杀': 6,   // 天府后六宫
+            '破军': 10   // 天府后十宫
+        };
+
+        // 安紫微系
+        for(let star in ZIWEI_SYSTEM) {
+            let offset = ZIWEI_SYSTEM[star];
+            let pos = (ziweiPos + offset + 12) % 12;
+            if(!stars[pos]) stars[pos] = [];
+            stars[pos].push(star);
+        }
+
+        // 安天府系
+        for(let star in TIANFU_SYSTEM) {
+            let offset = TIANFU_SYSTEM[star];
+            let pos = (tianfuPos + offset + 12) % 12;
+            if(!stars[pos]) stars[pos] = [];
+            stars[pos].push(star);
+        }
+
+        return stars;
+    }
+
+    // 安辅星
+    function anAuxStars(yearGan, yearZhi, hour, mingPos) {
+        const auxStars = {};
+
+        // 左辅右弼（以辰宫起左辅，顺数至月；以戌宫起右弼，逆数至月）
+        // 简化：左辅在命宫前5宫，右弼在命宫后5宫
+        let zuofuPos = (mingPos + 5) % 12;
+        let youbiPos = (mingPos - 5 + 12) % 12;
+        if(!auxStars[zuofuPos]) auxStars[zuofuPos] = [];
+        auxStars[zuofuPos].push('左辅');
+        if(!auxStars[youbiPos]) auxStars[youbiPos] = [];
+        auxStars[youbiPos].push('右弼');
+
+        // 文昌文曲（以时辰安星）
+        // 文昌：从戌宫起子时，逆数至生时
+        // 文曲：从辰宫起子时，顺数至生时
+        let wenchangPos = (10 - hour + 12) % 12; // 戌=10
+        let wenquPos = (4 + hour) % 12; // 辰=4
+        if(!auxStars[wenchangPos]) auxStars[wenchangPos] = [];
+        auxStars[wenchangPos].push('文昌');
+        if(!auxStars[wenquPos]) auxStars[wenquPos] = [];
+        auxStars[wenquPos].push('文曲');
+
+        // 天魁天钺（以年干安星）
+        const KUIYUE_POS = {
+            '甲': [1,7], '乙': [0,6], '丙': [9,3], '丁': [8,2], '戊': [1,7],
+            '己': [0,6], '庚': [9,3], '辛': [8,2], '壬': [3,9], '癸': [2,8]
+        };
+        let kuiyue = KUIYUE_POS[yearGan] || [0,6];
+        if(!auxStars[kuiyue[0]]) auxStars[kuiyue[0]] = [];
+        auxStars[kuiyue[0]].push('天魁');
+        if(!auxStars[kuiyue[1]]) auxStars[kuiyue[1]] = [];
+        auxStars[kuiyue[1]].push('天钺');
+
+        // 红鸾天喜（以年支安星）
+        const yearZhiIndex = DIZHI.indexOf(yearZhi);
+        // 红鸾：从卯宫起子年，逆数至年支
+        // 天喜：与红鸾相对
+        let hongluanPos = (3 - yearZhiIndex + 12) % 12; // 卯=3
+        let tianxiPos = (hongluanPos + 6) % 12;
+        if(!auxStars[hongluanPos]) auxStars[hongluanPos] = [];
+        auxStars[hongluanPos].push('红鸾');
+        if(!auxStars[tianxiPos]) auxStars[tianxiPos] = [];
+        auxStars[tianxiPos].push('天喜');
+
+        // 禄存（以年干安星）
+        const LUCUN_POS = {'甲':2,'乙':3,'丙':5,'丁':6,'戊':5,'己':6,'庚':8,'辛':9,'壬':0,'癸':1};
+        let lucunPos = LUCUN_POS[yearGan] || 2;
+        if(!auxStars[lucunPos]) auxStars[lucunPos] = [];
+        auxStars[lucunPos].push('禄存');
+
+        // 天马（以年支安星）
+        const TIANMA_POS = {'寅':5,'申':11,'巳':2,'亥':8,'子':1,'午':7,'丑':0,'未':6,'卯':3,'酉':9,'辰':4,'戌':10};
+        let tianmaPos = TIANMA_POS[yearZhi] || 5;
+        if(!auxStars[tianmaPos]) auxStars[tianmaPos] = [];
+        auxStars[tianmaPos].push('天马');
+
+        // 六煞星
+        // 擎羊陀罗（禄存所在宫必为羊陀所夹）
+        let qingyangPos = (lucunPos + 1) % 12;
+        let tuoluoPos = (lucunPos - 1 + 12) % 12;
+        if(!auxStars[qingyangPos]) auxStars[qingyangPos] = [];
+        auxStars[qingyangPos].push('擎羊');
+        if(!auxStars[tuoluoPos]) auxStars[tuoluoPos] = [];
+        auxStars[tuoluoPos].push('陀罗');
+
+        // 火星铃星（以年支和时辰安星）
+        // 简化算法
+        let huoxingPos = (mingPos + 2) % 12;
+        let lingxingPos = (mingPos + 3) % 12;
+        if(!auxStars[huoxingPos]) auxStars[huoxingPos] = [];
+        auxStars[huoxingPos].push('火星');
+        if(!auxStars[lingxingPos]) auxStars[lingxingPos] = [];
+        auxStars[lingxingPos].push('铃星');
+
+        // 天空地劫（以时辰安星）
+        let tiankongPos = (hour + 1) % 12;
+        let dijiePos = (hour + 7) % 12;
+        if(!auxStars[tiankongPos]) auxStars[tiankongPos] = [];
+        auxStars[tiankongPos].push('天空');
+        if(!auxStars[dijiePos]) auxStars[dijiePos] = [];
+        auxStars[dijiePos].push('地劫');
+
+        return auxStars;
+    }
+
+    // 来因宫（以生年天干定宫位）
+    const LAIYIN_POS = { '甲':10,'乙':9,'丙':8,'丁':7,'戊':6,'己':5,'庚':4,'辛':3,'壬':0,'癸':11 };
+
+    // 安四化（以年干安星 — 紫微斗数全书标准）
+    function anFourHua(yearGan) {
+        const FOUR_HUA = {
+            '甲': { '科':'武曲', '权':'破军', '禄':'廉贞', '忌':'太阳' },
+            '乙': { '科':'紫微', '权':'天梁', '禄':'天机', '忌':'太阴' },
+            '丙': { '科':'文昌', '权':'天机', '禄':'天同', '忌':'廉贞' },
+            '丁': { '科':'天机', '权':'天同', '禄':'太阴', '忌':'巨门' },
+            '戊': { '科':'右弼', '权':'太阴', '禄':'贪狼', '忌':'天机' },
+            '己': { '科':'天梁', '权':'贪狼', '禄':'武曲', '忌':'文曲' },
+            '庚': { '科':'太阴', '权':'武曲', '禄':'太阳', '忌':'天同' },
+            '辛': { '科':'文曲', '权':'太阳', '禄':'巨门', '忌':'文昌' },
+            '壬': { '科':'左辅', '权':'紫微', '禄':'天梁', '忌':'武曲' },
+            '癸': { '科':'太阴', '权':'巨门', '禄':'破军', '忌':'贪狼' }
+        };
+        return FOUR_HUA[yearGan] || FOUR_HUA['甲'];
+    }
+
+
+    // 星辰亮度（庙旺得利平闲陷）
+    function getStarPhase(star, pos) {
+        // 星辰亮度表（简化版）
+        const PHASE_TABLE = {
+            '紫微': { 0:'旺', 1:'旺', 2:'旺', 3:'旺', 4:'旺', 5:'旺', 6:'旺', 7:'旺', 8:'旺', 9:'旺', 10:'旺', 11:'旺' },
+            '天机': { 1:'旺', 2:'庙', 3:'旺', 6:'庙', 7:'旺', 10:'旺', 11:'庙' },
+            '太阳': { 1:'庙', 2:'旺', 3:'旺', 4:'旺', 5:'旺', 6:'旺', 7:'得', 8:'平', 9:'陷', 10:'陷', 11:'陷', 0:'陷' },
+            '太阴': { 0:'庙', 1:'旺', 2:'旺', 3:'旺', 4:'旺', 5:'旺', 6:'得', 7:'平', 8:'陷', 9:'陷', 10:'陷', 11:'陷' },
+            '武曲': { 0:'旺', 1:'庙', 2:'旺', 3:'旺', 4:'旺', 5:'旺', 6:'旺', 7:'旺', 8:'旺', 9:'旺', 10:'旺', 11:'旺' },
+            '天府': { 0:'庙', 1:'庙', 2:'庙', 3:'庙', 4:'庙', 5:'庙', 6:'庙', 7:'庙', 8:'庙', 9:'庙', 10:'庙', 11:'庙' },
+            '廉贞': { 0:'陷', 1:'庙', 2:'庙', 3:'庙', 4:'庙', 5:'庙', 6:'陷', 7:'陷', 8:'陷', 9:'陷', 10:'陷', 11:'陷' },
+            '贪狼': { 0:'旺', 1:'旺', 2:'旺', 3:'旺', 4:'旺', 5:'旺', 6:'庙', 7:'庙', 8:'庙', 9:'庙', 10:'庙', 11:'庙' },
+            '巨门': { 0:'旺', 1:'旺', 2:'旺', 3:'旺', 4:'旺', 5:'旺', 6:'庙', 7:'庙', 8:'庙', 9:'庙', 10:'庙', 11:'庙' },
+            '天相': { 0:'庙', 1:'庙', 2:'庙', 3:'庙', 4:'庙', 5:'庙', 6:'庙', 7:'庙', 8:'庙', 9:'庙', 10:'庙', 11:'庙' },
+            '天梁': { 0:'陷', 1:'陷', 2:'庙', 3:'庙', 4:'庙', 5:'庙', 6:'旺', 7:'旺', 8:'旺', 9:'旺', 10:'旺', 11:'旺' },
+            '七杀': { 0:'旺', 1:'旺', 2:'庙', 3:'庙', 4:'庙', 5:'庙', 6:'旺', 7:'旺', 8:'旺', 9:'旺', 10:'旺', 11:'旺' },
+            '破军': { 0:'旺', 1:'旺', 2:'旺', 3:'旺', 4:'旺', 5:'旺', 6:'庙', 7:'庙', 8:'庙', 9:'庙', 10:'庙', 11:'庙' }
+        };
+
+        if(PHASE_TABLE[star] && PHASE_TABLE[star][pos]) {
+            return PHASE_TABLE[star][pos];
+        }
+        return '平';
+    }
+
+    // ==================== 主排盘函数 ====================
+    // useManualSolarTime: true 时使用下方手动输入的真太阳时，跳过自动计算
+    function generateChart(useManualSolarTime) {
+        const year = parseInt(document.getElementById('birthYear').value);
+        const month = parseInt(document.getElementById('birthMonth').value);
+        const day = parseInt(document.getElementById('birthDay').value);
+        const birthTimeStr = document.getElementById('birthTime').value;
+        const gender = document.getElementById('gender').value;
+        const userName = document.getElementById('userName').value.trim();
+        const isAnonymous = document.getElementById('isAnonymous').checked;
+        const displayName = isAnonymous ? '匿名' : (userName || '未填');
+        const birthPlaceSelect = document.getElementById('birthPlace');
+        const selectedCity = birthPlaceSelect.options[birthPlaceSelect.selectedIndex].value;
+        const cityLongitude = CITY_LONGITUDE[selectedCity] || 120;
+
+        // 计算或读取真太阳时
+        let solarInfo;
+        if (useManualSolarTime) {
+            const manualTime = document.getElementById('manualSolarTime').value;
+            solarInfo = {
+                beijingTime: birthTimeStr,
+                trueSolarTime: manualTime,
+                eotMinutes: '--',
+                longitudeCorrection: '--',
+                totalDiffMinutes: '--'
+            };
+        } else {
+            solarInfo = calcTrueSolarTime(birthTimeStr, cityLongitude, month, day, year);
+        }
+        const hour = getShiChenFromTime(solarInfo.trueSolarTime);
+
+        // 显示真太阳时信息
+        const solarTimeInfoEl = document.getElementById('solarTimeInfo');
+        solarTimeInfoEl.style.display = 'block';
+        if (useManualSolarTime) {
+            solarTimeInfoEl.innerHTML =
+                `<div><b>姓名：</b>${displayName}</div>` +
+                `<div><b>公历生日：</b>${year}年${month}月${day}日</div>` +
+                `<div><b>北京时间：</b>${birthTimeStr}</div>` +
+                `<div><b>真太阳时（手动）：</b>${solarInfo.trueSolarTime}</div>` +
+                `<div><b>出生地：</b>${selectedCity}</div>` +
+                `<div><b>对应时辰：</b>${DIZHI[hour]}时</div>` +
+                `<div style="color:#666;font-size:12px;">已跳过真太阳时自动计算，直接使用手动输入值</div>`;
+        } else {
+            solarTimeInfoEl.innerHTML =
+                `<div><b>姓名：</b>${displayName}</div>` +
+                `<div><b>公历生日：</b>${year}年${month}月${day}日</div>` +
+                `<div><b>北京时间：</b>${solarInfo.beijingTime}</div>` +
+                `<div><b>真太阳时：</b>${solarInfo.trueSolarTime}</div>` +
+                `<div><b>出生地：</b>${selectedCity}（经度 ${cityLongitude}°）</div>` +
+                `<div><b>经度修正：</b>${solarInfo.longitudeCorrection} 分钟</div>` +
+                `<div><b>均时差（EoT）：</b>${solarInfo.eotMinutes} 分钟</div>` +
+                `<div><b>总修正：</b>${solarInfo.totalDiffMinutes} 分钟</div>` +
+                `<div><b>对应时辰：</b>${DIZHI[hour]}时</div>`;
+        }
+
+        // 公历→农历转换，用于紫微斗数排盘
+        const lunarDate = solarToLunarApprox(year, month, day);
+        const lunarYear = lunarDate.lunarYear;
+        const lunarMonth = lunarDate.lunarMonth;
+        let lunarDay = lunarDate.lunarDay;
+
+        // 早子时处理：0:00-0:59的日子按第二天算
+        if (isEarlyZiHour(solarInfo.trueSolarTime)) {
+            lunarDay = lunarDay + 1;
+            if (lunarDay > 30) lunarDay = 30;
+        }
+
+        // 计算干支（用农历年）
+        const yearGanZhi = getGanZhiYear(lunarYear);
+        const yearGan = yearGanZhi.charAt(0);
+        const yearZhi = yearGanZhi.charAt(1);
+
+        // 计算五行局数
+        const ju = getJuNumber(yearGanZhi);
+        const wuxing = WUXING_JU[yearGanZhi] ? WUXING_JU[yearGanZhi][0] : '土';
+
+        // 计算命宫身宫位置（用农历月）
+        const mingPos = calcMingGongPos(lunarMonth, hour);
+        const shenPos = calcShenGongPos(lunarMonth, hour);
+
+        // 计算紫微天府位置（用农历日）
+        const ziweiPos = anZiweiStar(ju, lunarDay);
+        const tianfuPos = anTianfuPos(ziweiPos);
+
+        // 安主星
+        const mainStars = anMainStars(ziweiPos, tianfuPos);
+
+        // 安辅星
+        const auxStars = anAuxStars(yearGan, yearZhi, hour, mingPos);
+
+        // 安四化
+        const fourHua = anFourHua(yearGan);
+
+        // 合并所有星
+        const allStars = {};
+        for(let pos in mainStars) {
+            if(!allStars[pos]) allStars[pos] = [];
+            allStars[pos] = allStars[pos].concat(mainStars[pos]);
+        }
+        for(let pos in auxStars) {
+            if(!allStars[pos]) allStars[pos] = [];
+            allStars[pos] = allStars[pos].concat(auxStars[pos]);
+        }
+
+        // 计算来因宫
+        const laiyinPos = LAIYIN_POS[yearGan] !== undefined ? LAIYIN_POS[yearGan] : 2;
+
+        // 计算阴阳
+        const yinyang = (TIANGAN.indexOf(yearGan) % 2 === 0) ? '阳' : '阴';
+        const yinyangGender = yinyang + (gender === 'male' ? '男' : '女');
+
+        // 显示命盘
+        displayChart(mingPos, shenPos, allStars, fourHua, {
+            yearGanZhi, yearGan, yearZhi, ju, wuxing, yinyangGender, gender, ziweiPos, tianfuPos, laiyinPos
+        });
+
+        // 生成解读
+        generateInterpretation(mingPos, shenPos, allStars, fourHua, {
+            yearGanZhi, yearGan, yearZhi, ju, wuxing, yinyangGender, gender, ziweiPos, tianfuPos, laiyinPos
+        });
+
+        // 格局识别
+        identifyPatterns(mingPos, allStars, fourHua);
+
+        // 显示区域
+        document.getElementById('chartSection').style.display = 'grid';
+        document.getElementById('interpretationSection').style.display = 'block';
+        document.getElementById('patternSection').style.display = 'block';
+    }
+
+    // ==================== 显示命盘 ====================
+    function displayChart(mingPos, shenPos, allStars, fourHua, info) {
+        // 命盘格（巳午未申酉戌亥子丑寅卯辰顺序）
+        const chartOrder = [5,6,7,8,9,10,11,0,1,2,3,4]; // 巳午未申酉戌亥子丑寅卯辰
+        const palaceOrder = [0,1,2,3,4,5,6,7,8,9,10,11]; // 命父母福德田宅官禄交友迁移疾厄财帛子女夫妻兄弟
+
+        // 计算每个宫位的实际位置
+        const palacePositions = [];
+        for(let i = 0; i < 12; i++) {
+            palacePositions[i] = (mingPos + i) % 12;
+        }
+
+        // 生成命盘HTML
+        let chartHtml = '';
+
+        // 按固定位置显示（巳-午-未-申-酉-戌-亥-子-丑-寅-卯-辰）
+        const fixedPositions = [5,6,7,8,9,10,11,0,1,2,3,4];
+        const gridClasses = ['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10','p11','p12'];
+
+        for(let i = 0; i < 12; i++) {
+            let fixedPos = fixedPositions[i];
+            // 找到命宫在这个固定位置对应的宫位名
+            let palaceIndex = -1;
+            for(let j = 0; j < 12; j++) {
+                if(palacePositions[j] === fixedPos) {
+                    palaceIndex = j;
+                    break;
+                }
+            }
+
+            let palaceName = PALACES[palaceIndex];
+            let stars = allStars[fixedPos] || [];
+            let isMing = (palaceIndex === 0);
+            let isShen = (fixedPos === shenPos);
+
+            // 星辰显示
+            let starsHtml = '';
+            stars.forEach(star => {
+                let phase = getStarPhase(star, fixedPos);
+                let starClass = getStarClass(star, phase, fourHua);
+                let fourMark = '';
+                if(fourHua['科'] === star) fourMark = '<span class="star-ke">科</span>';
+                if(fourHua['权'] === star) fourMark = '<span class="star-quan">权</span>';
+                if(fourHua['禄'] === star) fourMark = '<span class="star-lu">禄</span>';
+                if(fourHua['忌'] === star) fourMark = '<span class="star-ji">忌</span>';
+                starsHtml += `<span class="${starClass}">${star}${phase}</span>${fourMark} `;
+            });
+
+            chartHtml += `
+                <div class="palace ${gridClasses[i]} ${isMing ? 'ming' : ''}">
+                    <div class="palace-title">${palaceName}${isShen ? '(身)' : ''}</div>
+                    <div class="palace-stars">${starsHtml || '无主星'}</div>
+                    <div style="font-size:10px;color:#666;">${DIZHI[fixedPos]}宫</div>
+                </div>
+            `;
+        }
+
+        // 中间信息
+        chartHtml += `
+            <div class="center-info">
+                <div style="color:#ffd700;font-size:14px;">${info.yearGanZhi}年 ${info.yinyangGender}</div>
+                <div style="color:#87ceeb;">${info.wuxing}${info.ju}局</div>
+                <div style="color:#aaa;">紫微在${DIZHI[info.ziweiPos]}</div>
+                <div style="color:#aaa;">天府在${DIZHI[info.tianfuPos]}</div>
+                <div style="margin-top:10px;color:#9370db;">四化：</div>
+                <div style="font-size:12px;">
+                    <span class="star-ke">${fourHua['科']}化科</span>
+                    <span class="star-quan">${fourHua['权']}化权</span>
+                    <span class="star-lu">${fourHua['禄']}化禄</span>
+                    <span class="star-ji">${fourHua['忌']}化忌</span>
+                </div>
+                <div style="margin-top:8px;color:#ffa500;font-size:11px;">来因宫：${DIZHI[info.laiyinPos]}宫</div>
+            </div>
+        `;
+
+        document.getElementById('zwdsChart').innerHTML = chartHtml;
+
+        // 基本信息
+        let basicHtml = `
+            <div style="line-height:2;">
+                <div><b>出生年：</b>${info.yearGanZhi}年 (${info.yinyangGender})</div>
+                <div><b>五行局：</b>${info.wuxing}${info.ju}局</div>
+                <div><b>来因宫：</b>${DIZHI[info.laiyinPos]}宫（生年干${info.yearGan}所落之宫）</div>
+                <div><b>命宫：</b>${DIZHI[mingPos]}宫 (${PALACES[0]})</div>
+                <div><b>身宫：</b>${DIZHI[shenPos]}宫 (${getPalaceNameByPos(shenPos, mingPos)})</div>
+                <div><b>紫微星：</b>${DIZHI[info.ziweiPos]}宫</div>
+                <div><b>天府星：</b>${DIZHI[info.tianfuPos]}宫</div>
+                <div style="margin-top:10px;"><b>三方四正：</b>命宫、财帛宫、迁移宫、官禄宫</div>
+            </div>
+        `;
+        document.getElementById('basicInfo').innerHTML = basicHtml;
+    }
+
+    // 获取宫位名
+    function getPalaceNameByPos(pos, mingPos) {
+        let offset = (pos - mingPos + 12) % 12;
+        return PALACES[offset];
+    }
+
+    // 获取星辰CSS类
+    function getStarClass(star, phase, fourHua) {
+        let cls = '';
+        if(KNOWLEDGE.stars[star]) {
+            if(KNOWLEDGE.stars[star].type === '主星') cls = 'star-main';
+            else if(KNOWLEDGE.stars[star].type === '吉星') cls = 'star-good';
+            else if(KNOWLEDGE.stars[star].type === '煞星') cls = 'star-bad';
+        }
+
+        // 四化标记
+        if(fourHua['科'] === star || fourHua['权'] === star || fourHua['禄'] === star || fourHua['忌'] === star) {
+            cls += ' star-four';
+        }
+
+        return cls;
+    }
+
+    // ==================== 批命解读 ====================
+    function generateInterpretation(mingPos, shenPos, allStars, fourHua, info) {
+        let html = '';
+
+        // 1. 命宫分析
+        let mingStars = allStars[mingPos] || [];
+        html += `<div class="interpretation-section">
+            <div class="interpretation-title">命宫分析</div>
+            <div class="interpretation-content">
+                ${analyzePalace('命宫', mingStars, mingPos, fourHua, info)}
+            </div>
+        </div>`;
+
+        // 2. 三方四正分析
+        const sanfang = [mingPos, (mingPos+4)%12, (mingPos+8)%12, (mingPos+6)%12]; // 命财迁官
+        html += `<div class="interpretation-section">
+            <div class="interpretation-title">三方四正分析</div>
+            <div class="interpretation-content">
+                ${analyzeSanfang(sanfang, allStars, fourHua, mingPos)}
+            </div>
+        </div>`;
+
+        // 3. 身宫分析
+        let shenStars = allStars[shenPos] || [];
+        let shenPalaceName = getPalaceNameByPos(shenPos, mingPos);
+        html += `<div class="interpretation-section">
+            <div class="interpretation-title">身宫分析（后天发展）</div>
+            <div class="interpretation-content">
+                <p>身宫在${shenPalaceName}：${getBodyPalaceMeaning(shenPalaceName)}</p>
+                ${analyzePalace(shenPalaceName, shenStars, shenPos, fourHua, info)}
+            </div>
+        </div>`;
+
+        // 4. 四化分析
+        html += `<div class="interpretation-section">
+            <div class="interpretation-title">四化分析</div>
+            <div class="interpretation-content">
+                ${analyzeFourHua(fourHua, allStars, mingPos)}
+            </div>
+        </div>`;
+
+        // 5. 六亲分析
+        html += `<div class="interpretation-section">
+            <div class="interpretation-title">六亲分析</div>
+            <div class="interpretation-content">
+                ${analyzeSixRelations(mingPos, allStars, fourHua, info)}
+            </div>
+        </div>`;
+
+        // 6. 大运分析
+        html += `<div class="interpretation-section">
+            <div class="interpretation-title">十年大运</div>
+            <div class="interpretation-content">
+                ${analyzeDayun(mingPos, info.ju, info.yinyangGender)}
+            </div>
+        </div>`;
+
+        document.getElementById('interpretationContent').innerHTML = html;
+    }
+
+    // 分析单个宫位
+    function analyzePalace(palaceName, stars, pos, fourHua, info) {
+        let text = `<p><b>${palaceName}星辰：</b>${stars.length > 0 ? stars.join('、') : '无主星（看对宫）'}</p>`;
+
+        // 星辰解读
+        stars.forEach(star => {
+            if(KNOWLEDGE.stars[star]) {
+                let phase = getStarPhase(star, pos);
+                let phaseText = phase === '陷' ? '<span class="bad-text">落陷</span>' :
+                               phase === '庙' || phase === '旺' ? '<span class="good-text">庙旺</span>' : phase;
+                text += `<p><b>${star}${phaseText}：</b>${KNOWLEDGE.stars[star].meaning}</p>`;
+            }
+        });
+
+        // 四化影响
+        stars.forEach(star => {
+            if(fourHua['科'] === star) text += `<p class="good-text">${star}化科：主科名、专业技术专长</p>`;
+            if(fourHua['权'] === star) text += `<p class="good-text">${star}化权：主权、官印、个性刚直</p>`;
+            if(fourHua['禄'] === star) text += `<p class="good-text">${star}化禄：主财、櫃吝</p>`;
+            if(fourHua['忌'] === star) text += `<p class="bad-text">${star}化忌：主劫杀、想不开、停滞</p>`;
+        });
+
+        return text;
+    }
+
+    // 三方四正分析
+    function analyzeSanfang(sanfang, allStars, fourHua, mingPos) {
+        let text = '';
+        const palaceNames = ['命宫', '财帛宫', '官禄宫', '迁移宫'];
+
+        sanfang.forEach((pos, i) => {
+            let stars = allStars[pos] || [];
+            let hasGood = stars.some(s => KNOWLEDGE.stars[s] && KNOWLEDGE.stars[s].type === '吉星');
+            let hasBad = stars.some(s => KNOWLEDGE.stars[s] && KNOWLEDGE.stars[s].type === '煞星');
+            let hasFour = stars.some(s => fourHua['科']===s || fourHua['权']===s || fourHua['禄']===s);
+
+            text += `<p><b>${palaceNames[i]}：</b>`;
+            if(hasGood && !hasBad) text += '<span class="good-text">吉星汇聚，大吉</span>';
+            else if(hasBad && !hasGood) text += '<span class="bad-text">煞星多，需谨慎</span>';
+            else if(hasFour) text += '<span class="good-text">有四化，格局不错</span>';
+            else text += '平平';
+            text += ` (${stars.join('、') || '无主星'})</p>`;
+        });
+
+        // 总评
+        let allSanfangStars = [];
+        sanfang.forEach(pos => {
+            if(allStars[pos]) allSanfangStars = allSanfangStars.concat(allStars[pos]);
+        });
+
+        let hasKe = allSanfangStars.includes(fourHua['科']);
+        let hasQuan = allSanfangStars.includes(fourHua['权']);
+        let hasLu = allSanfangStars.includes(fourHua['禄']);
+
+        if(hasKe && hasQuan && hasLu) {
+            text += `<p class="good-text pattern-found">三方四正科权禄三会，主一方之主，大富大贵！</p>`;
+        } else if(hasKe && hasQuan) {
+            text += `<p class="good-text">科权来会，适合教育行业或专业技术</p>`;
+        } else if(hasQuan && hasLu) {
+            text += `<p class="good-text">权禄相逢，自己做事业当老板</p>`;
+        }
+
+        return text;
+    }
+
+    // 身宫意义
+    function getBodyPalaceMeaning(palaceName) {
+        const meanings = {
+            '命宫': '身命同宫，先天后天都一样',
+            '财帛宫': '私企或自己做老板',
+            '官禄宫': '做官，从政',
+            '迁移宫': '外地发展',
+            '夫妻宫': '后天被婚姻影响很大',
+            '福德宫': '后天注重精神享受'
+        };
+        return meanings[palaceName] || '需结合命盘分析';
+    }
+
+    // 四化分析
+    function analyzeFourHua(fourHua, allStars, mingPos) {
+        let text = '';
+
+        // 找四化所在宫位
+        for(let pos in allStars) {
+            allStars[pos].forEach(star => {
+                if(fourHua['科'] === star) {
+                    let palaceName = getPalaceNameByPos(parseInt(pos), mingPos);
+                    text += `<p><b>${star}化科在${palaceName}：</b>${KNOWLEDGE.four['化科'].position}</p>`;
+                }
+                if(fourHua['权'] === star) {
+                    let palaceName = getPalaceNameByPos(parseInt(pos), mingPos);
+                    text += `<p><b>${star}化权在${palaceName}：</b>${KNOWLEDGE.four['化权'].position}</p>`;
+                }
+                if(fourHua['禄'] === star) {
+                    let palaceName = getPalaceNameByPos(parseInt(pos), mingPos);
+                    text += `<p><b>${star}化禄在${palaceName}：</b>${KNOWLEDGE.four['化禄'].position}</p>`;
+                }
+                if(fourHua['忌'] === star) {
+                    let palaceName = getPalaceNameByPos(parseInt(pos), mingPos);
+                    text += `<p class="bad-text"><b>${star}化忌在${palaceName}：</b>${KNOWLEDGE.four['化忌'].meaning}，该宫十年事倍功半</p>`;
+                }
+            });
+        }
+
+        return text;
+    }
+
+    // 六亲分析
+    function analyzeSixRelations(mingPos, allStars, fourHua, info) {
+        let text = '';
+
+        // 父母宫
+        let fumuPos = (mingPos + 1) % 12;
+        let fumuStars = allStars[fumuPos] || [];
+        text += `<p><b>父母宫：</b>${fumuStars.join('、') || '无主星'}`;
+        if(fumuStars.includes(fourHua['忌'])) text += ' <span class="bad-text">化忌入父母宫，与父母有阻隔</span>';
+        if(fumuStars.includes('太阳') && getStarPhase('太阳', fumuPos) === '陷') text += ' <span class="bad-text">太阳落陷，父亲辛苦或早逝</span>';
+        if(fumuStars.includes('太阴') && getStarPhase('太阴', fumuPos) === '陷') text += ' <span class="bad-text">太阴落陷，母亲辛苦或早逝</span>';
+        text += '</p>';
+
+        // 兄弟宫
+        let xiongdiPos = (mingPos + 11) % 12;
+        let xiongdiStars = allStars[xiongdiPos] || [];
+        text += `<p><b>兄弟宫：</b>${xiongdiStars.join('、') || '无主星'}`;
+        if(xiongdiStars.includes(fourHua['忌'])) text += ' <span class="bad-text">化忌入兄弟宫，兄弟不和或夭折或合伙破财</span>';
+        text += '</p>';
+
+        // 夫妻宫
+        let fuqiPos = (mingPos + 10) % 12;
+        let fuqiStars = allStars[fuqiPos] || [];
+        text += `<p><b>夫妻宫：</b>${fuqiStars.join('、') || '无主星'}`;
+        if(fuqiStars.includes('廉贞') && fuqiStars.includes('贪狼') && getStarPhase('廉贞', fuqiPos) === '陷')
+            text += ' <span class="bad-text">廉贪落陷入夫妻宫，婚姻大凶</span>';
+        if(fuqiStars.includes('廉贞') && fuqiStars.includes('破军'))
+            text += ' <span class="bad-text">廉破入夫妻宫，主生离或死别</span>';
+        if(fuqiStars.includes(fourHua['忌'])) text += ' <span class="bad-text">化忌入夫妻宫，婚姻不顺</span>';
+        text += '</p>';
+
+        // 子女宫
+        let zinvPos = (mingPos + 9) % 12;
+        let zinvStars = allStars[zinvPos] || [];
+        text += `<p><b>子女宫：</b>${zinvStars.join('、') || '无主星'}`;
+        if(zinvStars.includes(fourHua['忌'])) text += ' <span class="bad-text">化忌入子女宫，无子或子女不顺</span>';
+        text += '</p>';
+
+        return text;
+    }
+
+    // 大运分析
+    function analyzeDayun(mingPos, ju, yinyangGender) {
+        let text = `<p>起运年龄：${ju}岁起十年大运</p>`;
+        text += `<p>大运方向：${yinyangGender.includes('阳男') || yinyangGender.includes('阴女') ? '顺行' : '逆行'}</p>`;
+
+        // 列出十年大运
+        let direction = (yinyangGender.includes('阳男') || yinyangGender.includes('阴女')) ? 1 : -1;
+        text += '<p><b>大运顺序：</b>';
+        for(let i = 0; i < 12; i++) {
+            let pos = (mingPos + i * direction + 12) % 12;
+            let palaceName = PALACES[i];
+            let startAge = ju + i * 10;
+            text += `${startAge}-${startAge+9}岁(${palaceName}) `;
+        }
+        text += '</p>';
+
+        text += `<p style="color:#aaa;">命好不如限好：十年大运为主，小流年为辅</p>`;
+
+        return text;
+    }
+
+    // ==================== 格局识别 ====================
+    function identifyPatterns(mingPos, allStars, fourHua) {
+        let html = '';
+        let foundPatterns = [];
+
+        // 检查各种格局
+        let mingStars = allStars[mingPos] || [];
+
+        // 紫府坐垣
+        if(mingPos === 2 || mingPos === 8) { // 寅申
+            if(mingStars.includes('紫微') && mingStars.includes('天府')) {
+                foundPatterns.push({ name: '紫府坐垣', level: '大吉' });
+            }
+        }
+
+        // 七杀朝斗
+        if(mingPos === 2 || mingPos === 8) {
+            if(mingStars.includes('七杀') && mingStars.length === 1) {
+                foundPatterns.push({ name: '七杀朝斗', level: '大吉' });
+            }
+        }
+
+        // 巨日格
+        let sanfang = [mingPos, (mingPos+4)%12, (mingPos+8)%12, (mingPos+6)%12];
+        let hasJuMen = false, hasTaiYang = false, juMenPhase = '', taiYangPhase = '';
+        sanfang.forEach(pos => {
+            let stars = allStars[pos] || [];
+            if(stars.includes('巨门')) { hasJuMen = true; juMenPhase = getStarPhase('巨门', pos); }
+            if(stars.includes('太阳')) { hasTaiYang = true; taiYangPhase = getStarPhase('太阳', pos); }
+        });
+        if(hasJuMen && hasTaiYang) {
+            if(taiYangPhase === '庙' || taiYangPhase === '旺') {
+                foundPatterns.push({ name: '巨日格', level: '吉' });
+            } else {
+                foundPatterns.push({ name: '巨日格(落陷)', level: '凶', note: '女命偏房，男命喜怒无常' });
+            }
+        }
+
+        // 日月反背
+        let taiYangPos = -1, taiYinPos = -1;
+        for(let pos in allStars) {
+            if(allStars[pos].includes('太阳')) taiYangPos = parseInt(pos);
+            if(allStars[pos].includes('太阴')) taiYinPos = parseInt(pos);
+        }
+        if(taiYangPos >= 0 && taiYinPos >= 0) {
+            let taiYangPhase = getStarPhase('太阳', taiYangPos);
+            let taiYinPhase = getStarPhase('太阴', taiYinPos);
+            if(taiYangPhase === '陷' && taiYinPhase === '陷') {
+                foundPatterns.push({ name: '日月反背', level: '凶', note: '工作披星戴月，六亲不靠' });
+            } else if(taiYangPhase === '庙' && taiYinPhase === '庙') {
+                foundPatterns.push({ name: '日月并明', level: '大吉' });
+            }
+        }
+
+        // 半空折翅
+        if(mingPos === 5 || mingPos === 11) { // 巳亥
+            let duigongPos = (mingPos + 6) % 12;
+            let duigongStars = allStars[duigongPos] || [];
+            if(duigongStars.includes('廉贞') && duigongStars.includes('贪狼')) {
+                if(getStarPhase('廉贞', duigongPos) === '陷' || getStarPhase('贪狼', duigongPos) === '陷') {
+                    foundPatterns.push({ name: '半空折翅', level: '大凶', note: '大限在中年30岁左右' });
+                }
+            }
+        }
+
+        // 火贵格
+        if(mingStars.includes('贪狼') && mingStars.includes('火星')) {
+            foundPatterns.push({ name: '火贵格', level: '吉', note: '武贵，作武官' });
+        }
+
+        // 英星入命
+        if(mingPos === 0 || mingPos === 6) { // 子午
+            if(mingStars.includes('破军') && (getStarPhase('破军', mingPos) === '庙' || getStarPhase('破军', mingPos) === '旺')) {
+                foundPatterns.push({ name: '英星入命', level: '吉' });
+            }
+        }
+
+        // 月朗天门
+        if(mingPos === 11 && mingStars.includes('太阴') && getStarPhase('太阴', mingPos) === '庙') {
+            foundPatterns.push({ name: '月朗天门', level: '大吉', note: '女命最吉' });
+        }
+
+        // 日照雷门
+        if(mingPos === 3 && mingStars.includes('太阳') && getStarPhase('太阳', mingPos) === '庙') {
+            foundPatterns.push({ name: '日照雷门', level: '大吉', note: '男命最吉' });
+        }
+
+        // 雄宿朝元
+        if(mingPos === 2 || mingPos === 8) { // 寅申
+            if(mingStars.includes('廉贞') && mingStars.length === 1) {
+                foundPatterns.push({ name: '雄宿朝元', level: '吉', note: '利军人商人' });
+            }
+        }
+
+        // 禄马交驰
+        for(let pos in allStars) {
+            let stars = allStars[pos];
+            if(stars.includes('禄存') && stars.includes('天马')) {
+                foundPatterns.push({ name: '禄马交驰', level: '大吉', note: '辛苦赚大钱，大富' });
+            }
+            if(stars.includes('化禄') && stars.includes('天马')) {
+                foundPatterns.push({ name: '禄马交驰', level: '大吉', note: '辛苦赚大钱，大富' });
+            }
+        }
+
+        // 女身男命
+        let gender = document.getElementById('gender').value;
+        if(gender === 'female') {
+            let hasWuGuan = mingStars.some(s => ['七杀','破军','贪狼','武曲','太阳','廉贞'].includes(s));
+            if(hasWuGuan) {
+                foundPatterns.push({ name: '女身男命', level: '辛苦', note: '一生辛苦，主孤独' });
+            }
+        }
+
+        // 显示结果
+        if(foundPatterns.length === 0) {
+            html = '<p style="color:#aaa;">未识别到经典格局，需结合具体星辰组合分析</p>';
+        } else {
+            foundPatterns.forEach(p => {
+                let levelClass = p.level === '大吉' || p.level === '吉' ? 'good-text' : 'bad-text';
+                let patternInfo = KNOWLEDGE.patterns[p.name] || {};
+                html += `<div class="pattern-found">
+                    <span class="${levelClass}"><b>${p.name}</b> (${p.level})</span>
+                    <p style="margin:5px 0;color:#ddd;">${patternInfo.meaning || p.note || ''}</p>
+                </div>`;
+            });
+        }
+
+        document.getElementById('patternContent').innerHTML = html;
+    }
+
+    // ==================== 八字排盘 ====================
+    const NAYIN = {
+        '甲子':'海中金','乙丑':'海中金','丙寅':'炉中火','丁卯':'炉中火',
+        '戊辰':'大林木','己巳':'大林木','庚午':'路旁土','辛未':'路旁土',
+        '壬申':'剑锋金','癸酉':'剑锋金','甲戌':'山头火','乙亥':'山头火',
+        '丙子':'涧下水','丁丑':'涧下水','戊寅':'城头土','己卯':'城头土',
+        '庚辰':'白蜡金','辛巳':'白蜡金','壬午':'杨柳木','癸未':'杨柳木',
+        '甲申':'泉中水','乙酉':'泉中水','丙戌':'屋上土','丁亥':'屋上土',
+        '戊子':'霹雳火','己丑':'霹雳火','庚寅':'松柏木','辛卯':'松柏木',
+        '壬辰':'长流水','癸巳':'长流水','甲午':'沙中金','乙未':'沙中金',
+        '丙申':'山下火','丁酉':'山下火','戊戌':'平地木','己亥':'平地木',
+        '庚子':'壁上土','辛丑':'壁上土','壬寅':'金箔金','癸卯':'金箔金',
+        '甲辰':'覆灯火','乙巳':'覆灯火','丙午':'天河水','丁未':'天河水',
+        '戊申':'大驿土','己酉':'大驿土','庚戌':'钗钏金','辛亥':'钗钏金',
+        '壬子':'桑柘木','癸丑':'桑柘木','甲寅':'大溪水','乙卯':'大溪水',
+        '丙辰':'沙中土','丁巳':'沙中土','戊午':'天上火','己未':'天上火',
+        '庚申':'石榴木','辛酉':'石榴木','壬戌':'大海水','癸亥':'大海水'
+    };
+    const GAN_WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'};
+    const ZHI_WX = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'};
+    const GAN_YY = {'甲':'阳','乙':'阴','丙':'阳','丁':'阴','戊':'阳','己':'阴','庚':'阳','辛':'阴','壬':'阳','癸':'阴'};
+    const WX_CLASS = {'木':'wuxing-mu','火':'wuxing-huo','土':'wuxing-tu','金':'wuxing-jin','水':'wuxing-shui'};
+    const CANG_GAN = {
+        '子':['癸'],'丑':['己','癸','辛'],'寅':['甲','丙','戊'],'卯':['乙'],
+        '辰':['戊','乙','癸'],'巳':['丙','庚','戊'],'午':['丁','己'],'未':['己','丁','乙'],
+        '申':['庚','壬','戊'],'酉':['辛'],'戌':['戊','辛','丁'],'亥':['壬','甲']
+    };
+    const CS_START = {'甲':'亥','乙':'午','丙':'寅','丁':'酉','戊':'寅','己':'酉','庚':'巳','辛':'子','壬':'申','癸':'卯'};
+    const CS_NAMES = ['长生','沐浴','冠带','临官','帝旺','衰','病','死','墓','绝','胎','养'];
+
+    const JIE_QI_DOY = [35, 65, 95, 126, 157, 188, 219, 251, 281, 311, 341, 371];
+    const JIE_QI_ZHI = ['寅','卯','辰','巳','午','未','申','酉','戌','亥','子','丑'];
+
+    function getLiChunDOY(year) { return isLeapYear(year) ? 36 : 35; }
+
+    function getJieQiMonth(doy, year) {
+        let daysInYear = isLeapYear(year) ? 366 : 365;
+        let t = JIE_QI_DOY.map(d => d > daysInYear ? d - daysInYear : d);
+        for (let i = 0; i < 10; i++) { if (doy >= t[i] && doy < t[i + 1]) return i; }
+        if (doy >= t[10] || doy < t[11]) return 10;
+        return 11;
+    }
+
+    function wuhudun(ygi) { return [2,4,6,8,0,2,4,6,8,0][ygi]; }
+    function wushudun(dgi) { return [0,2,4,6,8,0,2,4,6,8][dgi]; }
+
+    function calcDayGanZhi(year, month, day) {
+        let totalDays = 0;
+        for (let y = 1900; y < year; y++) totalDays += isLeapYear(y) ? 366 : 365;
+        totalDays += dayOfYear(month, day, year) - 1;
+        let idx = ((totalDays + 10) % 60 + 60) % 60;
+        return { gan: TIANGAN[idx % 10], zhi: DIZHI[idx % 12], ganIdx: idx % 10, zhiIdx: idx % 12, gzIdx: idx };
+    }
+
+    function calcHourGanZhi(dayGanIdx, hourZhiIdx) {
+        let hgi = (wushudun(dayGanIdx) + hourZhiIdx) % 10;
+        return { gan: TIANGAN[hgi], zhi: DIZHI[hourZhiIdx] };
+    }
+
+    // 从天干地支索引获取六十甲子序号
+    function getGzIdx(ganIdx, zhiIdx) {
+        for (let i = 0; i < 60; i++) { if (i % 10 === ganIdx && i % 12 === zhiIdx) return i; }
+        return 0;
+    }
+
+    function wxClass(c) { return WX_CLASS[GAN_WX[c] || ZHI_WX[c]] || ''; }
+
+    // 十神
+    function getShiShen(dayGan, otherGan) {
+        let dw = GAN_WX[dayGan], ow = GAN_WX[otherGan];
+        let dy = GAN_YY[dayGan], oy = GAN_YY[otherGan];
+        let wxIdx = {'木':0,'火':1,'土':2,'金':3,'水':4};
+        let d = (wxIdx[ow] - wxIdx[dw] + 5) % 5;
+        let sy = dy === oy;
+        return ['比肩','劫财','食神','伤官','偏财','正财','七杀','正官','偏印','正印'][d * 2 + (sy ? 0 : 1)];
+    }
+
+    // 十二长生
+    function getChangSheng(dayGan, zhi) {
+        let start = CS_START[dayGan];
+        let startIdx = DIZHI.indexOf(start);
+        let zhiIdx = DIZHI.indexOf(zhi);
+        let step = GAN_YY[dayGan] === '阳' ? 1 : -1;
+        let offset = ((zhiIdx - startIdx) * step + 12) % 12;
+        return CS_NAMES[offset];
+    }
+
+    // 空亡
+    function getKongWang(gzIdx) {
+        let xunShou = gzIdx - (gzIdx % 10);
+        let xsZhi = xunShou % 12;
+        return DIZHI[(xsZhi - 2 + 12) % 12] + DIZHI[(xsZhi - 1 + 12) % 12];
+    }
+
+    // 神煞
+    function getShensha(pillars, dayGZ) {
+        let tags = [];
+        // 天乙贵人
+        let tianyi = {'甲':'丑未','乙':'子申','丙':'亥酉','丁':'亥酉','戊':'丑未','己':'子申','庚':'丑未','辛':'午寅','壬':'卯巳','癸':'卯巳'};
+        let tyYear = tianyi[pillars[0].gan] || '';
+        let tyDay = tianyi[pillars[2].gan] || '';
+        pillars.forEach((p, i) => {
+            if (tyYear.includes(p.zhi)) tags.push(p.label + '天乙贵人');
+            if (tyDay.includes(p.zhi)) tags.push(p.label + '天乙贵人');
+        });
+        // 文昌
+        let wenchang = {'甲':'巳','乙':'午','丙':'申','丁':'酉','戊':'申','己':'酉','庚':'亥','辛':'子','壬':'寅','癸':'卯'};
+        let wc = wenchang[pillars[2].gan];
+        pillars.forEach(p => { if (p.zhi === wc) tags.push(p.label + '文昌'); });
+        // 桃花（咸池）
+        let taohuaMap = {'子':'酉','丑':'午','寅':'卯','卯':'子','辰':'酉','巳':'午','午':'卯','未':'子','申':'酉','酉':'午','戌':'卯','亥':'子'};
+        let th = taohuaMap[pillars[0].zhi];
+        pillars.forEach(p => { if (p.zhi === th) tags.push(p.label + '桃花'); });
+        // 驿马
+        let yimaMap = {'子':'寅','丑':'亥','寅':'申','卯':'巳','辰':'寅','巳':'亥','午':'申','未':'巳','申':'寅','酉':'亥','戌':'申','亥':'巳'};
+        let ym = yimaMap[pillars[0].zhi];
+        pillars.forEach(p => { if (p.zhi === ym) tags.push(p.label + '驿马'); });
+        // 禄神
+        let lushen = {'甲':'寅','乙':'卯','丙':'巳','丁':'午','戊':'巳','己':'午','庚':'申','辛':'酉','壬':'亥','癸':'子'};
+        let ls = lushen[pillars[2].gan];
+        pillars.forEach(p => { if (p.zhi === ls) tags.push(p.label + '禄神'); });
+        // 羊刃
+        let yangren = {'甲':'卯','乙':'寅','丙':'午','丁':'巳','戊':'午','己':'巳','庚':'酉','辛':'申','壬':'子','癸':'亥'};
+        let yr = yangren[pillars[2].gan];
+        pillars.forEach(p => { if (p.zhi === yr) tags.push(p.label + '羊刃'); });
+        // 华盖
+        let huagaiMap = {'子':'辰','丑':'丑','寅':'戌','卯':'未','辰':'辰','巳':'丑','午':'戌','未':'未','申':'辰','酉':'丑','戌':'戌','亥':'未'};
+        let hg = huagaiMap[pillars[0].zhi];
+        pillars.forEach(p => { if (p.zhi === hg) tags.push(p.label + '华盖'); });
+        return tags;
+    }
+
+    // 八字自动计算真太阳时（从出生时间+出生地）
+    function autoCalcBaziSolarTime() {
+        const year = parseInt(document.getElementById('baziBirthYear').value);
+        const month = parseInt(document.getElementById('baziBirthMonth').value);
+        const day = parseInt(document.getElementById('baziBirthDay').value);
+        const birthTimeStr = document.getElementById('baziBirthTime').value;
+        const bps = document.getElementById('baziBirthPlace');
+        const city = bps.options[bps.selectedIndex].value;
+        const lon = CITY_LONGITUDE[city] || 120;
+        const si = calcTrueSolarTime(birthTimeStr, lon, month, day, year);
+        document.getElementById('baziSolarTime').value = si.trueSolarTime;
+    }
+
+    function calcBazi() {
+        const year = parseInt(document.getElementById('baziBirthYear').value);
+        const month = parseInt(document.getElementById('baziBirthMonth').value);
+        const day = parseInt(document.getElementById('baziBirthDay').value);
+        const userName = document.getElementById('baziUserName').value.trim();
+        const isAnonymous = document.getElementById('baziIsAnonymous').checked;
+        const displayName = isAnonymous ? '匿名' : (userName || '未填');
+        const gender = document.getElementById('baziGender').value;
+        const displayGender = gender === 'male' ? '男' : '女';
+        const bps = document.getElementById('baziBirthPlace');
+        const selectedCity = bps.options[bps.selectedIndex].value;
+        const cityLongitude = CITY_LONGITUDE[selectedCity] || 120;
+
+        // 真太阳时：优先使用手动输入值
+        const trueTime = document.getElementById('baziSolarTime').value;
+        const hourZhiIdx = getShiChenFromTime(trueTime);
+
+        const dayGZ = calcDayGanZhi(year, month, day);
+
+        let doy = dayOfYear(month, day, year);
+        let liChunDOY = getLiChunDOY(year);
+        let pillarYear = doy >= liChunDOY ? year : year - 1;
+        let yearGZIdx = ((pillarYear - 4) % 60 + 60) % 60;
+        let yearGan = TIANGAN[yearGZIdx % 10], yearZhi = DIZHI[yearGZIdx % 12], yearGanIdx = yearGZIdx % 10;
+
+        let jieQiMonth = getJieQiMonth(doy, year);
+        let monthGanIdx = (wuhudun(yearGanIdx) + jieQiMonth) % 10;
+        let monthGan = TIANGAN[monthGanIdx], monthZhi = JIE_QI_ZHI[jieQiMonth];
+
+        let hourGZ = calcHourGanZhi(dayGZ.ganIdx, hourZhiIdx);
+
+        let pillars = [
+            { label:'年柱', gan:yearGan, zhi:yearZhi, gzIdx:yearGZIdx },
+            { label:'月柱', gan:monthGan, zhi:monthZhi, gzIdx:getGzIdx(monthGanIdx, jieQiMonth) },
+            { label:'日柱', gan:dayGZ.gan, zhi:dayGZ.zhi, gzIdx:dayGZ.gzIdx },
+            { label:'时柱', gan:hourGZ.gan, zhi:hourGZ.zhi, gzIdx:getGzIdx(TIANGAN.indexOf(hourGZ.gan), hourZhiIdx) }
+        ];
+
+        let shenshaTags = getShensha(pillars, dayGZ);
+
+        // 构建柱子 HTML（天干在上，地支在下）
+        let pillarsHtml = '';
+        pillars.forEach((p, i) => {
+            let isDay = (i === 2);
+            let ganCls = wxClass(p.gan), zhiCls = wxClass(p.zhi);
+            let cg = CANG_GAN[p.zhi] || [];
+            let cgHtml = cg.map(c => '<span class="' + wxClass(c) + '">' + c + '</span><span style="color:#888;">' + getShiShen(dayGZ.gan, c) + '</span>').join(' ');
+            let ss = getShiShen(dayGZ.gan, p.gan);
+            let ny = NAYIN[p.gan + p.zhi] || '';
+            let cs = getChangSheng(dayGZ.gan, p.zhi);
+            let kw = getKongWang(p.gzIdx);
+            let kwMatch = kw.includes(p.zhi);
+            let zizuo = '';
+            if (isDay) {
+                let mainCg = CANG_GAN[p.zhi][0];
+                zizuo = '<span style="color:#aaa;">自坐</span> ' + getShiShen(dayGZ.gan, mainCg);
+            }
+            pillarsHtml += '<div class="bazi-pillar">' +
+                '<div class="bazi-label">' + p.label + '</div>' +
+                '<div class="bazi-gan" style="font-size:22px;"><span class="' + ganCls + '">' + p.gan + '</span></div>' +
+                '<div class="bazi-zhi" style="font-size:18px;margin-bottom:6px;"><span class="' + zhiCls + '">' + p.zhi + '</span></div>' +
+                '<div class="bazi-canggan">' + cgHtml + '</div>' +
+                '<div class="bazi-shishen">' + ss + '</div>' +
+                '<div class="bazi-nayin">' + ny + '</div>' +
+                '<div class="bazi-xingyun">' + cs + '</div>' +
+                (kwMatch ? '<div class="bazi-kongwang">空亡 ' + kw + '</div>' : '') +
+                (zizuo ? '<div class="bazi-zizuo">' + zizuo + '</div>' : '') +
+                '</div>';
+        });
+
+        // 神煞标签
+        let shenshaHtml = '';
+        if (shenshaTags.length > 0) {
+            shenshaHtml = '<div style="margin-top:10px;"><b style="color:#999;">神煞：</b><div class="bazi-shensha-row">' +
+                shenshaTags.map(t => '<span class="bazi-shensha-tag" style="color:#ffa500;">' + t + '</span>').join('') +
+                '</div></div>';
+        }
+
+        document.getElementById('baziResultSection').style.display = 'block';
+        document.getElementById('baziPillars').innerHTML = pillarsHtml;
+        document.getElementById('baziShensha').innerHTML = shenshaHtml;
+        document.getElementById('baziDetail').innerHTML =
+            '<div><b>姓名：</b>' + displayName + '　<b>性别：</b>' + displayGender + '　<b>日主：</b><span class="' + wxClass(dayGZ.gan) + '">' + dayGZ.gan + '</span></div>' +
+            '<div style="margin-top:4px;"><b>公历：</b>' + year + '-' + String(month).padStart(2,'0') + '-' + String(day).padStart(2,'0') + '　<b>真太阳时：</b>' + trueTime + '　<b>时辰：</b>' + DIZHI[hourZhiIdx] + '时</div>' +
+            '<div style="margin-top:4px;color:#666;">' + selectedCity + '（' + cityLongitude + '°E）</div>';
+
+        document.getElementById('baziResultSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ==================== 小六壬 ====================
+    function calcLiuren() {
+        const month = parseInt(document.getElementById('lrMonth').value);
+        const day = parseInt(document.getElementById('lrDay').value);
+        const hour = parseInt(document.getElementById('lrHour').value);
+
+        // 小六壬：大安-流连-速喜-赤口-小吉-空亡
+        const LIUREN = ['大安', '流连', '速喜', '赤口', '小吉', '空亡'];
+        const LIUREN_MEANING = {
+            '大安': '代表一个礼拜左右看到想要的结果，吉',
+            '流连': '代表事情停止不前、此行不利',
+            '速喜': '代表立竿见影马上看到所要的结果，吉',
+            '赤口': '代表有第三者介入、是非、人为的事情干扰',
+            '小吉': '代表两个礼拜后看到所要的结果，吉',
+            '空亡': '代表凶，事情不成'
+        };
+
+        // 计算方法：(月+日+时) % 6
+        let total = month + day + hour;
+        let index = total % 6;
+        let result = LIUREN[index];
+
+        let html = `
+            <div style="font-size:24px;color:#ffd700;margin-bottom:10px;">${result}</div>
+            <div style="color:#ddd;">${LIUREN_MEANING[result]}</div>
+            <div style="margin-top:10px;color:#aaa;">计算：${month}月+${day}日+${hour}时=${total}，取${index}位</div>
+        `;
+
+        document.getElementById('liurenResult').innerHTML = html;
+    }
+
+    function setNowTime() {
+        const now = new Date();
+        // 获取农历时间（简化：使用公历近似）
+        let lunarMonth = now.getMonth() + 1;
+        let lunarDay = now.getDate();
+        let hour = now.getHours();
+        let hourIndex = Math.floor((hour + 1) / 2) % 12 + 1; // 转换为时辰序号
+
+        document.getElementById('lrMonth').value = lunarMonth;
+        document.getElementById('lrDay').value = lunarDay;
+        document.getElementById('lrHour').value = hourIndex;
+
+        calcLiuren();
+    }
+
+    // ==================== 知识库显示 ====================
+    function showKnowledge(type) {
+        // 切换tab样式
+        document.querySelectorAll('.knowledge-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        // 匹配对应类型的tab并激活
+        let tabEl = document.querySelector('.knowledge-tab[onclick*=\"' + type + '\"]');
+        if (tabEl) tabEl.classList.add('active');
+
+        let html = '';
+
+        if(type === 'stars') {
+            html = '<h3 style="color:#ffd700;">主星详解</h3>';
+            for(let star in KNOWLEDGE.stars) {
+                if(KNOWLEDGE.stars[star].type === '主星') {
+                    html += `<div class="star-info"><span class="star-name">${star}</span> (${KNOWLEDGE.stars[star].system})：${KNOWLEDGE.stars[star].meaning}</div>`;
+                }
+            }
+            html += '<h3 style="color:#ffd700;margin-top:15px;">吉星详解</h3>';
+            for(let star in KNOWLEDGE.stars) {
+                if(KNOWLEDGE.stars[star].type === '吉星') {
+                    html += `<div class="star-info"><span class="star-name">${star}</span>：${KNOWLEDGE.stars[star].meaning}</div>`;
+                }
+            }
+            html += '<h3 style="color:#ff6b6b;margin-top:15px;">煞星详解</h3>';
+            for(let star in KNOWLEDGE.stars) {
+                if(KNOWLEDGE.stars[star].type === '煞星') {
+                    html += `<div class="star-info"><span class="star-name" style="color:#ff6b6b;">${star}</span>：${KNOWLEDGE.stars[star].meaning}</div>`;
+                }
+            }
+        }
+
+        if(type === 'palaces') {
+            for(let palace in KNOWLEDGE.palaces) {
+                html += `<div class="star-info"><span class="star-name">${palace}</span>：${KNOWLEDGE.palaces[palace].meaning}<br><small style="color:#87ceeb;">相关：${KNOWLEDGE.palaces[palace].related}</small></div>`;
+            }
+        }
+
+        if(type === 'patterns') {
+            for(let pattern in KNOWLEDGE.patterns) {
+                let levelClass = KNOWLEDGE.patterns[pattern].level === '大吉' || KNOWLEDGE.patterns[pattern].level === '吉' ? 'good-text' : 'bad-text';
+                html += `<div class="star-info"><span class="star-name">${pattern}</span> <span class="${levelClass}">(${KNOWLEDGE.patterns[pattern].level})</span><br>条件：${KNOWLEDGE.patterns[pattern].condition}<br>意义：${KNOWLEDGE.patterns[pattern].meaning}</div>`;
+            }
+        }
+
+        if(type === 'four') {
+            for(let hua in KNOWLEDGE.four) {
+                let colorClass = hua === '化忌' ? 'bad-text' : 'good-text';
+                html += `<div class="star-info"><span class="star-name ${colorClass}">${hua}</span>：${KNOWLEDGE.four[hua].meaning}<br><small style="color:#87ceeb;">位置：${KNOWLEDGE.four[hua].position}</small></div>`;
+            }
+        }
+
+        document.getElementById('knowledgeContent').innerHTML = html;
+    }
+
+    // ==================== 初始化 ====================
+    // 一键获取当前位置
+    function getQimenLocation() {
+        if (!navigator.geolocation) {
+            alert('浏览器不支持定位功能');
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {
+                let lon = pos.coords.longitude.toFixed(1);
+                document.getElementById('qimenLongitude').value = lon;
+                refreshQimenTime();
+            },
+            function(err) {
+                alert('获取位置失败：' + (err.message || '请检查定位权限'));
+            },
+            { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
+        );
+    }
+
+    // 刷新奇门状态栏真太阳时
+    function refreshQimenTime() {
+        const now = new Date();
+        const lon = parseFloat(document.getElementById('qimenLongitude').value) || 120;
+        const year = now.getFullYear(), month = now.getMonth() + 1, day = now.getDate();
+        const timeStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+        const si = calcTrueSolarTime(timeStr, lon, month, day, year);
+        document.getElementById('qimenSolarTime').textContent = si.trueSolarTime;
+    }
+
+    // 更新今日日期面板
+    function updateTodayPanel() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const hour = now.getHours();
+        const minute = now.getMinutes();
+        const timeStr = String(hour).padStart(2,'0') + ':' + String(minute).padStart(2,'0');
+
+        // 公历
+        const weekdays = ['日','一','二','三','四','五','六'];
+        const wd = weekdays[now.getDay()];
+        document.getElementById('todaySolar').innerHTML =
+            '公历 ' + year + '年' + month + '月' + day + '日 星期' + wd + ' ' + timeStr;
+
+        // 农历
+        const lunar = solarToLunarApprox(year, month, day);
+        const lunarGZ = getGanZhiYear(lunar.lunarYear);
+        const lMonthNames = ['正','二','三','四','五','六','七','八','九','十','十一','腊'];
+        const lDayNames = ['','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+            '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+            '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+        document.getElementById('todayLunar').innerHTML =
+            '农历 ' + lunarGZ + '年' + (lunar.isLeap ? '闰' : '') + lMonthNames[lunar.lunarMonth-1] + '月' + (lDayNames[lunar.lunarDay] || lunar.lunarDay);
+
+        // 四柱
+        const hourZhiIdx = getShiChenFromTime(timeStr);
+        const dayGZ = calcDayGanZhi(year, month, day);
+
+        let doy = dayOfYear(month, day, year);
+        let liChunDOY = getLiChunDOY(year);
+        let pillarYear = doy >= liChunDOY ? year : year - 1;
+        let yearGZIdx = ((pillarYear - 4) % 60 + 60) % 60;
+        let yearGan = TIANGAN[yearGZIdx % 10], yearZhi = DIZHI[yearGZIdx % 12], yearGanIdx = yearGZIdx % 10;
+
+        let jieQiMonth = getJieQiMonth(doy, year);
+        let monthGanIdx = (wuhudun(yearGanIdx) + jieQiMonth) % 10;
+        let monthGan = TIANGAN[monthGanIdx], monthZhi = JIE_QI_ZHI[jieQiMonth];
+
+        let hourGZ = calcHourGanZhi(dayGZ.ganIdx, hourZhiIdx);
+
+        let pillars = [
+            { label:'年', gan:yearGan, zhi:yearZhi },
+            { label:'月', gan:monthGan, zhi:monthZhi },
+            { label:'日', gan:dayGZ.gan, zhi:dayGZ.zhi },
+            { label:'时', gan:hourGZ.gan, zhi:hourGZ.zhi }
+        ];
+
+        let html = '';
+        pillars.forEach(p => {
+            let gWx = GAN_WX[p.gan], zWx = ZHI_WX[p.zhi];
+            let gCls = WX_CLASS[gWx], zCls = WX_CLASS[zWx];
+            let ny = NAYIN[p.gan + p.zhi] || '';
+            html += '<div class="today-pillar">' +
+                '<div class="today-pillar-label">' + p.label + '柱</div>' +
+                '<div class="today-pillar-gan ' + gCls + '">' + p.gan + '</div>' +
+                '<div class="today-pillar-zhi ' + zCls + '">' + p.zhi + '</div>' +
+                '<div class="today-pillar-wx">' + gWx + '·' + zWx + ' ' + ny + '</div>' +
+                '</div>';
+        });
+        document.getElementById('todayPillars').innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 显示今日日期面板
+        updateTodayPanel();
+        // 初始化奇门状态栏真太阳时
+        refreshQimenTime();
+
+        // 动态填充出生年下拉框
+        const birthYearSelect = document.getElementById('birthYear');
+        for(let y = 1920; y <= 2030; y++) {
+            let opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y + '年 (' + getGanZhiYear(y) + ')';
+            birthYearSelect.appendChild(opt);
+        }
+        // 默认选中1990年
+        birthYearSelect.value = 1990;
+
+        // 动态填充出生日下拉框
+        const birthDaySelect = document.getElementById('birthDay');
+        for(let d = 1; d <= 31; d++) {
+            let opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d + '日';
+            birthDaySelect.appendChild(opt);
+        }
+
+        // 动态填充出生地下拉框
+        const birthPlaceSelect = document.getElementById('birthPlace');
+        for(let city in CITY_LONGITUDE) {
+            let opt = document.createElement('option');
+            opt.value = city;
+            opt.textContent = city + ' (' + CITY_LONGITUDE[city] + '°E)';
+            birthPlaceSelect.appendChild(opt);
+        }
+        // 八字排盘 - 填充年份下拉框
+        const baziBirthYearSelect = document.getElementById('baziBirthYear');
+        for(let y = 1920; y <= 2030; y++) {
+            let opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y + '年 (' + getGanZhiYear(y) + ')';
+            baziBirthYearSelect.appendChild(opt);
+        }
+        baziBirthYearSelect.value = 1990;
+        // 八字排盘 - 填充日下拉框
+        const baziBirthDaySelect = document.getElementById('baziBirthDay');
+        for(let d = 1; d <= 31; d++) {
+            let opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d + '日';
+            baziBirthDaySelect.appendChild(opt);
+        }
+        // 八字排盘的出生地下拉框
+        const baziBirthPlaceSelect = document.getElementById('baziBirthPlace');
+        for(let city in CITY_LONGITUDE) {
+            let opt = document.createElement('option');
+            opt.value = city;
+            opt.textContent = city + ' (' + CITY_LONGITUDE[city] + '°E)';
+            baziBirthPlaceSelect.appendChild(opt);
+        }
+
+        // 动态填充小六壬下拉框
+        const lrMonthSelect = document.getElementById('lrMonth');
+        for(let m = 1; m <= 12; m++) {
+            let opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m + '月';
+            lrMonthSelect.appendChild(opt);
+        }
+
+        const lrDaySelect = document.getElementById('lrDay');
+        for(let d = 1; d <= 30; d++) {
+            let opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d + '日';
+            lrDaySelect.appendChild(opt);
+        }
+
+        const lrHourSelect = document.getElementById('lrHour');
+        for(let h = 1; h <= 12; h++) {
+            let opt = document.createElement('option');
+            opt.value = h;
+            opt.textContent = h;
+            lrHourSelect.appendChild(opt);
+        }
+
+        // 初始化显示星辰知识
+        showKnowledge('stars');
+    });
+
+    // ==================== 六爻铜钱起卦 ====================
+    // 八卦符号
+    const BAGUA_YAO = {
+        '乾': [1,1,1], '兑': [0,1,1], '离': [1,0,1], '震': [0,0,1],
+        '巽': [1,1,0], '坎': [0,1,0], '艮': [1,0,0], '坤': [0,0,0]
+    };
+    const BAGUA_SYMBOL = {
+        '乾': '☰', '兑': '☱', '离': '☲', '震': '☳',
+        '巽': '☴', '坎': '☵', '艮': '☶', '坤': '☷'
+    };
+
+    // 64卦数据库 [上卦, 下卦, 卦名, 卦辞摘要]
+    const GUA64 = {
+        '111111': ['乾','乾','乾为天','元亨利贞，刚健中正，自强不息。'],
+        '111110': ['乾','兑','天泽履','履虎尾，不咥人，亨。小心行事，以柔克刚。'],
+        '111101': ['乾','离','天火同人','同人于野，亨。团结合作，利涉大川。'],
+        '111100': ['乾','震','天雷无妄','无妄，元亨利贞。不虚伪，顺应天理。'],
+        '111011': ['乾','巽','天风姤','姤，女壮，勿用取女。偶然相遇，防小人。'],
+        '111010': ['乾','坎','天水讼','讼，有孚窒惕。争讼之事，宜和解。'],
+        '111001': ['乾','艮','天山遁','遁，亨，小利贞。退避隐忍，以退为进。'],
+        '111000': ['乾','坤','天地否','否之匪人，大往小来。天地不交，闭塞不通。'],
+        '011111': ['兑','乾','泽天夬','夬，扬于王庭。决断刚毅，去除小人。'],
+        '011110': ['兑','兑','兑为泽','亨，利贞。喜悦和乐，刚内柔外。'],
+        '011101': ['兑','离','泽火革','革，已日乃孚。变革创新，顺天应人。'],
+        '011100': ['兑','震','泽雷随','随，元亨利贞。随时变通，随遇而安。'],
+        '011011': ['兑','巽','泽风大过','大过，栋桡。过度之举，需谨慎。'],
+        '011010': ['兑','坎','泽水困','困，亨贞大人吉。困境之中，坚守正道。'],
+        '011001': ['兑','艮','泽山咸','咸，亨利贞。感应相通，婚姻吉。'],
+        '011000': ['兑','坤','泽地萃','萃，亨。聚集汇合，以正聚众。'],
+        '101111': ['离','乾','火天大有','大有，元亨。大有收获，光明正大。'],
+        '101110': ['离','兑','火泽睽','睽，小事吉。背离乖违，求同存异。'],
+        '101101': ['离','离','离为火','利贞亨。依附光明，文明之象。'],
+        '101100': ['离','震','火雷噬嗑','噬嗑，亨。刑罚除障，明辨是非。'],
+        '101011': ['离','巽','火风鼎','鼎，元吉亨。革故鼎新，养贤育才。'],
+        '101010': ['离','坎','火水未济','未济，亨。事未成，需努力。'],
+        '101001': ['离','艮','火山旅','旅，小亨。旅途在外，谨慎小心。'],
+        '101000': ['离','坤','火地晋','晋，康侯用锡马蕃庶。光明上进，晋升之象。'],
+        '001111': ['震','乾','雷天大壮','大壮，利贞。阳刚壮盛，非礼弗履。'],
+        '001110': ['震','兑','雷泽归妹','归妹，征凶。行为不正，归妹无成。'],
+        '001101': ['震','离','雷火丰','丰，亨。丰盛盈满，日中则昃。'],
+        '001100': ['震','震','震为雷','亨。震惊百里，恐惧修德。'],
+        '001011': ['震','巽','雷风恒','恒，亨无咎。持之以恒，长久之道。'],
+        '001010': ['震','坎','雷水解','解，利西南。解除困难，百事舒缓。'],
+        '001001': ['震','艮','雷山小过','小过，亨利贞。小有过越，宜小不宜大。'],
+        '001000': ['震','坤','雷地豫','豫，利建侯行师。欢乐愉快，顺势而动。'],
+        '110111': ['巽','乾','风天小畜','小畜，亨。力量微小，蓄养待时。'],
+        '110110': ['巽','兑','风泽中孚','中孚，豚鱼吉。诚信为本，感化万物。'],
+        '110101': ['巽','离','风火家人','家人，利女贞。治家之道，各正其位。'],
+        '110100': ['巽','震','风雷益','益，利有攸往。损上益下，大吉大利。'],
+        '110011': ['巽','巽','巽为风','小亨，利有攸往。顺从谦逊，渐入佳境。'],
+        '110010': ['巽','坎','风水涣','涣，亨。涣散离析，以正聚合。'],
+        '110001': ['巽','艮','风山渐','渐，女归吉。循序渐进，好事渐成。'],
+        '110000': ['巽','坤','风地观','观，盥而不荐。观察审视，以德服人。'],
+        '010111': ['坎','乾','水天需','需，有孚光亨。等待时机，守正待命。'],
+        '010110': ['坎','兑','水泽节','节，亨。适度节制，不可过中。'],
+        '010101': ['坎','离','水火既济','既济，亨小利贞。万事已成，需防衰退。'],
+        '010100': ['坎','震','水雷屯','屯，元亨利贞。万事开头难，坚持不懈。'],
+        '010011': ['坎','巽','水风井','井，改邑不改井。养民不穷，修德不已。'],
+        '010010': ['坎','坎','坎为水','有孚维心亨。重重险阻，诚信渡险。'],
+        '010001': ['坎','艮','水山蹇','蹇，利西南。行路艰难，见险宜止。'],
+        '010000': ['坎','坤','水地比','比，吉。亲比辅助，团结合作。'],
+        '100111': ['艮','乾','山天大畜','大畜，利贞。大有积蓄，厚积薄发。'],
+        '100110': ['艮','兑','山泽损','损，有孚元吉。减损以益，先损后益。'],
+        '100101': ['艮','离','山火贲','贲，亨。文饰之美，实质为重。'],
+        '100100': ['艮','震','山雷颐','颐，贞吉。颐养正道，慎言节食。'],
+        '100011': ['艮','巽','山风蛊','蛊，元亨利涉大川。整治腐败，拨乱反正。'],
+        '100010': ['艮','坎','山水蒙','蒙，亨。启蒙教育，以果行育德。'],
+        '100001': ['艮','艮','艮为山','艮其背不获其身。知止则止，安静守正。'],
+        '100000': ['艮','坤','山地剥','剥，不利有攸往。阴盛阳衰，顺时而止。'],
+        '000111': ['坤','乾','地天泰','泰，小往大来。天地交泰，万事通达。'],
+        '000110': ['坤','兑','地泽临','临，元亨利贞。居高临下，教化万民。'],
+        '000101': ['坤','离','地火明夷','明夷，利艰贞。光明受损，韬光养晦。'],
+        '000100': ['坤','震','地雷复','复，亨。一阳来复，万物复苏。'],
+        '000011': ['坤','巽','地风升','升，元亨。积小成大，步步上升。'],
+        '000010': ['坤','坎','地水师','师，贞丈人吉。统率之象，纪律严明。'],
+        '000001': ['坤','艮','地山谦','谦，亨。谦虚受益，满招损谦受益。'],
+        '000000': ['坤','坤','坤为地','元亨利牝马之贞。厚德载物，柔顺承天。']
+    };
+
+    // 六爻状态
+    let liuyaoState = {
+        coins: [true, true, true], // true=字(背), false=花(面)
+        yaos: [], // 记录每一爻: {backCount, type, yaoValue}
+        currentYao: 1 // 当前第几爻 (1-6)
+    };
+
+    // 点击铜钱翻转
+    function flipCoin(index) {
+        liuyaoState.coins[index] = !liuyaoState.coins[index];
+        updateCoinDisplay();
+    }
+
+    // 更新铜钱显示
+    function updateCoinDisplay() {
+        for (let i = 0; i < 3; i++) {
+            let el = document.getElementById('coin' + (i + 1));
+            if (liuyaoState.coins[i]) {
+                el.className = 'coin head';
+                el.textContent = '字';
+            } else {
+                el.className = 'coin tail';
+                el.textContent = '花';
+            }
+        }
+    }
+
+    // 掷铜钱
+    function throwCoins() {
+        if (liuyaoState.currentYao > 6) return;
+
+        // 随机掷出
+        for (let i = 0; i < 3; i++) {
+            liuyaoState.coins[i] = Math.random() > 0.5;
+        }
+        updateCoinDisplay();
+
+        // 计算背数 (字=背=3, 花=面=2)
+        let backCount = liuyaoState.coins.filter(c => c).length;
+        let faceCount = 3 - backCount;
+        let total = backCount * 3 + faceCount * 2; // 6,7,8,9
+
+        // 判断爻的类型
+        let type, yaoValue;
+        if (total === 6) { type = '老阴'; yaoValue = 0; }       // 三个花 → 老阴(动爻) ▬ ▬ ×
+        else if (total === 7) { type = '少阳'; yaoValue = 1; }  // 两花一字 → 少阳 ▬▬▬
+        else if (total === 8) { type = '少阴'; yaoValue = 0; }  // 一花两字 → 少阴 ▬ ▬
+        else if (total === 9) { type = '老阳'; yaoValue = 1; }  // 三个字 → 老阳(动爻) ▬▬▬ ○
+
+        liuyaoState.yaos.push({ backCount, faceCount, total, type, yaoValue });
+
+        // 更新爻记录显示
+        updateYaoDisplay();
+
+        liuyaoState.currentYao++;
+
+        if (liuyaoState.currentYao <= 6) {
+            document.getElementById('yaoProgress').textContent = `第 ${liuyaoState.currentYao} 爻 / 共 6 爻（从下往上）`;
+        } else {
+            document.getElementById('yaoProgress').textContent = '卦已成';
+            document.getElementById('throwBtn').disabled = true;
+            document.getElementById('throwBtn').style.opacity = '0.3';
+            // 显示卦象结果
+            setTimeout(showGuaResult, 500);
+        }
+    }
+
+    // 更新爻显示
+    function updateYaoDisplay() {
+        let html = '';
+        liuyaoState.yaos.forEach((yao, i) => {
+            let yaoNum = i + 1;
+            let symbol = '';
+            let cssClass = '';
+
+            if (yao.type === '老阴') {
+                symbol = '▬ ▬ ×';
+                cssClass = 'dong-yin';
+            } else if (yao.type === '老阳') {
+                symbol = '▬▬▬ ○';
+                cssClass = 'dong-yang';
+            } else if (yao.type === '少阳') {
+                symbol = '▬▬▬';
+                cssClass = 'yang';
+            } else {
+                symbol = '▬ ▬';
+                cssClass = 'yin';
+            }
+
+            html += `<div class="yao-line ${cssClass}">
+                <span class="yao-label">第${yaoNum}爻</span>
+                <span class="yao-symbol">${symbol}</span>
+                <span class="yao-type">${yao.backCount}背${yao.faceCount}面 ${yao.type}</span>
+            </div>`;
+        });
+        document.getElementById('yaoRecord').innerHTML = html;
+    }
+
+    // 显示卦象结果
+    function showGuaResult() {
+        // 从下到上取爻值组成卦象
+        let lowerYao = liuyaoState.yaos.slice(0, 3).map(y => y.yaoValue);
+        let upperYao = liuyaoState.yaos.slice(3, 6).map(y => y.yaoValue);
+
+        // 查找上下卦
+        let lowerGua = findBagua(lowerYao);
+        let upperGua = findBagua(upperYao);
+
+        // 组合键
+        let guaKey = upperYao.join('') + lowerYao.join('');
+        let guaData = GUA64[guaKey];
+
+        // 检查动爻（变卦）
+        let dongYaoList = [];
+        liuyaoState.yaos.forEach((yao, i) => {
+            if (yao.type === '老阴' || yao.type === '老阳') {
+                dongYaoList.push(i + 1);
+            }
+        });
+
+        // 计算变卦
+        let bianGuaKey = null;
+        let bianGuaName = '';
+        if (dongYaoList.length > 0) {
+            let bianYao = liuyaoState.yaos.map(y => {
+                if (y.type === '老阴') return 1; // 阴变阳
+                if (y.type === '老阳') return 0; // 阳变阴
+                return y.yaoValue;
+            });
+            let bianLower = bianYao.slice(0, 3);
+            let bianUpper = bianYao.slice(3, 6);
+            bianGuaKey = bianUpper.join('') + bianLower.join('');
+            let bianData = GUA64[bianGuaKey];
+            if (bianData) bianGuaName = bianData[2];
+        }
+
+        // 生成卦象符号
+        let guaSymbolHtml = buildGuaSymbol(upperYao, lowerYao);
+
+        let html = `<div class="gua-name">${guaData ? guaData[2] : '未知卦'}</div>`;
+        html += `<div class="gua-symbol">${guaSymbolHtml}</div>`;
+        html += `<div class="gua-detail">`;
+        html += `<div><b>上卦：</b>${upperGua}（${BAGUA_SYMBOL[upperGua] || ''}）</div>`;
+        html += `<div><b>下卦：</b>${lowerGua}（${BAGUA_SYMBOL[lowerGua] || ''}）</div>`;
+        html += `<div><b>卦辞：</b>${guaData ? guaData[3] : ''}</div>`;
+        if (dongYaoList.length > 0) {
+            html += `<div style="margin-top:10px;"><b>动爻：</b>第 ${dongYaoList.join('、')} 爻</div>`;
+            if (bianGuaName) {
+                html += `<div><b>变卦：</b>${bianGuaName}</div>`;
+            }
+            html += `<div style="color:#ff6666;margin-top:5px;">有动爻，本卦为事之始，变卦为事之终</div>`;
+        } else {
+            html += `<div style="margin-top:10px;color:#aaa;">无动爻，以本卦断之</div>`;
+        }
+        // 爻辞简要
+        html += `<div style="margin-top:10px;border-top:1px solid #333;padding-top:10px;">`;
+        html += `<b>六爻详情：</b></div>`;
+        liuyaoState.yaos.forEach((yao, i) => {
+            let isDong = yao.type === '老阴' || yao.type === '老阳';
+            html += `<div style="${isDong ? 'color:#ff6666;' : ''}">第${i+1}爻：${yao.backCount}背${yao.faceCount}面 → ${yao.type}${isDong ? '（动）' : ''}</div>`;
+        });
+        html += `</div>`;
+
+        document.getElementById('guaResult').innerHTML = html;
+        document.getElementById('guaResult').style.display = 'block';
+    }
+
+    // 查找八卦名
+    function findBagua(yaoArr) {
+        for (let name in BAGUA_YAO) {
+            let arr = BAGUA_YAO[name];
+            if (arr[0] === yaoArr[0] && arr[1] === yaoArr[1] && arr[2] === yaoArr[2]) {
+                return name;
+            }
+        }
+        return '未知';
+    }
+
+    // 构建卦象符号
+    function buildGuaSymbol(upperYao, lowerYao) {
+        let lines = [];
+        // 上卦（从上到下）
+        upperYao.forEach(v => {
+            lines.push(v === 1 ? '▬▬▬' : '▬ ▬');
+        });
+        lines.push('─────'); // 分隔线
+        // 下卦（从上到下）
+        lowerYao.forEach(v => {
+            lines.push(v === 1 ? '▬▬▬' : '▬ ▬');
+        });
+        return lines.join('<br>');
+    }
+
+    // 重置六爻
+    function resetLiuyao() {
+        liuyaoState = {
+            coins: [true, true, true],
+            yaos: [],
+            currentYao: 1
+        };
+        updateCoinDisplay();
+        document.getElementById('yaoRecord').innerHTML = '';
+        document.getElementById('guaResult').style.display = 'none';
+        document.getElementById('guaResult').innerHTML = '';
+        document.getElementById('yaoProgress').textContent = '第 1 爻 / 共 6 爻（从下往上）';
+        document.getElementById('throwBtn').disabled = false;
+        document.getElementById('throwBtn').style.opacity = '1';
+    }
+    // ==================== 奇门遁甲排盘 ====================
+    const QM_JU = [
+        [1,7,4],[2,8,5],[3,9,6],[8,5,2],[9,6,3],[1,7,4],[3,9,6],[4,1,7],[5,2,8],[4,1,7],[5,2,8],[6,3,9],
+        [9,3,6],[8,2,5],[7,1,4],[2,5,8],[1,4,7],[9,3,6],[7,1,4],[6,9,3],[5,8,2],[6,9,3],[5,8,2],[4,7,1]
+    ];
+    const QM_STARS = ['天蓬','天芮','天冲','天辅','天禽','天心','天柱','天任','天英'];
+    const QM_DOORS = ['休','生','伤','杜','景','死','惊','开'];
+    const QM_SPIRITS_YANG = ['值符','螣蛇','太阴','六合','白虎','玄武','九地','九天'];
+    const QM_SPIRITS_YIN = ['值符','九天','九地','玄武','白虎','六合','太阴','螣蛇'];
+    const QM_STAR_POS = {天蓬:1,天芮:2,天冲:3,天辅:4,天禽:5,天心:6,天柱:7,天任:8,天英:9};
+    const QM_DOOR_POS = {休:1,生:8,伤:3,杜:4,景:9,死:2,惊:7,开:6};
+    const QM_DZ = {1:'子',2:'未申',3:'卯',4:'辰巳',5:'',6:'戌亥',7:'酉',8:'丑寅',9:'午'};
+    const QM_NAMES = {1:'坎',2:'坤',3:'震',4:'巽',5:'中',6:'乾',7:'兑',8:'艮',9:'离'};
+
+    const YD_FLIGHT = [1,2,3,4,5,6,7,8,9];
+    const YING_FLIGHT = [9,8,7,6,5,4,3,2,1];
+
+    // 符头：上元=甲子/己卯/甲午/己酉, 中元=甲戌/己丑/甲辰/己未, 下元=甲申/己亥/甲寅/己巳
+    function getQMFuTou(dayGZIdx) {
+        let ftMap = {0:0,15:0,30:0,45:0, 10:1,25:1,40:1,55:1, 20:2,35:2,50:2,5:2};
+        for (let back = 0; back < 10; back++) {
+            let idx = (dayGZIdx - back + 60) % 60;
+            if (ftMap[idx] !== undefined) return {ft:idx, yuan:ftMap[idx], offset:back};
+        }
+        return {ft:0, yuan:0, offset:0};
+    }
+
+    // 24节气近似DOY
+    const JQ24_DOY = [355,5,20,35,50,65,80,95,110,126,141,157,172,188,203,219,234,251,266,281,296,311,326,341];
+
+    function getQMJu(doy, year, yuan) {
+        let diy = isLeapYear(year) ? 366 : 365;
+        // 找当前日期所属节气（上一个已过节气）
+        let jqIdx = 0;
+        for (let i = 0; i < 24; i++) {
+            let d = JQ24_DOY[i];
+            if (d > diy) d -= diy;
+            if (doy >= d) jqIdx = i;
+        }
+        jqIdx = jqIdx % 24;
+        let row = QM_JU[jqIdx];
+        if (!row) row = [1,7,4];
+        let ju = row[yuan];
+        let isYang = jqIdx < 12; // 冬至~芒种=阳遁
+        return {ju, isYang, jqIdx};
+    }
+
+    function qimenJiXing(yi, palace) {
+        let checks = {戊:[3],己:[2],庚:[8],辛:[9],壬:[4],癸:[4]};
+        return checks[yi] && checks[yi].includes(palace);
+    }
+
+    function qimenRuMu(yi, palace) {
+        let mu = {甲:2,乙:6,丙:6,丁:8,戊:6,己:8,庚:8,辛:4,壬:4,癸:2};
+        return mu[yi[0]] === palace;
+    }
+
+    function getQimenKongWang(dayGZIdx) {
+        let xs = dayGZIdx - (dayGZIdx % 10);
+        let xsZhi = xs % 12;
+        return [(xsZhi - 2 + 12) % 12, (xsZhi - 1 + 12) % 12];
+    }
+
+    function getQimenMaXingPalace(hourZhiIdx) {
+        let h = hourZhiIdx;
+        if (h === 2 || h === 6 || h === 10) return 2;  // 寅午戌→马在申→坤2
+        if (h === 8 || h === 0 || h === 4) return 8;   // 申子辰→马在寅→艮8
+        if (h === 5 || h === 9 || h === 1) return 6;   // 巳酉丑→马在亥→乾6
+        return 4; // 亥卯未→马在巳→巽4
+    }
+
+    function paiQiMen() {
+        const now = new Date();
+        const year = now.getFullYear(), month = now.getMonth() + 1, day = now.getDate();
+        const lon = parseFloat(document.getElementById('qimenLongitude').value) || 120;
+        const si = calcTrueSolarTime(String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0'), lon, month, day, year);
+        const [solarH, solarM] = si.trueSolarTime.split(':').map(Number);
+        const hour = solarH, minute = solarM;
+        const timeStr = String(hour).padStart(2,'0') + ':' + String(minute).padStart(2,'0');
+
+        // 日干支
+        const dayGZ = calcDayGanZhi(year, month, day);
+        // 时干支
+        const hourZhiIdx = getShiChenFromTime(timeStr);
+        const hGanIdx = (wushudun(dayGZ.ganIdx) + hourZhiIdx) % 10;
+        const hourGan = TIANGAN[hGanIdx], hourZhi = DIZHI[hourZhiIdx];
+        const hourGZIdx = getGzIdx(hGanIdx, hourZhiIdx);
+
+        // 符头与局数
+        const ftInfo = getQMFuTou(dayGZ.gzIdx);
+        let doy = dayOfYear(month, day, year);
+        const {ju, isYang} = getQMJu(doy, year, ftInfo.yuan);
+
+        // 地盘奇仪
+        let flight = isYang ? YD_FLIGHT : YING_FLIGHT;
+        let dp = {}; // palace → yi
+        let yiList = ['戊','己','庚','辛','壬','癸','丁','丙','乙'];
+        let startIdx = flight.indexOf(ju);
+        for (let i = 0; i < 9; i++) {
+            let pal = flight[(startIdx + i) % 9];
+            dp[pal] = yiList[i];
+        }
+
+        // 时柱旬首
+        let xs = hourGZIdx - (hourGZIdx % 10);
+        let xsGanIdx = xs % 10, xsZhiIdx = xs % 12;
+        let xsZhi = DIZHI[xsZhiIdx];
+
+        // 值符星
+        let xsYi = null, xsPal = null;
+        for (let pal = 1; pal <= 9; pal++) {
+            let yi = dp[pal] || '';
+            if (yi === TIANGAN[xsGanIdx]) { xsYi = yi; xsPal = pal; break; }
+        }
+        if (!xsYi) { xsYi = '戊'; xsPal = ju; }
+        let zhifuStar = QM_STARS[xsPal - 1] || '天禽';
+
+        // 值使门
+        let xsHourDiff = (hourZhiIdx - xsZhiIdx + 12) % 12;
+        // 值使落宫
+        let doorStartPal = isYang ? xsPal : xsPal;
+        let zhishiPal = ((doorStartPal - 1 + xsHourDiff) % 9) + 1;
+
+        // 时干落宫
+        let shiGanPal = null;
+        for (let pal = 1; pal <= 9; pal++) {
+            if (dp[pal] === hourGan) { shiGanPal = pal; break; }
+        }
+        if (!shiGanPal) shiGanPal = ju;
+
+        // 天盘星
+        let tpStar = {};
+        let starOrder = [];
+        for (let i = 0; i < 9; i++) starOrder.push(QM_STARS[(xsPal - 1 + i) % 9]);
+        let sfIdx = starOrder.indexOf(zhifuStar);
+        for (let i = 0; i < 9; i++) {
+            let pal = flight[(flight.indexOf(shiGanPal) - sfIdx + i + 9) % 9];
+            tpStar[pal] = starOrder[i];
+        }
+
+        // 人盘门
+        let tpDoor = {};
+        let doorOrder = [];
+        for (let i = 0; i < 8; i++) doorOrder.push(QM_DOORS[(QM_DOORS.indexOf('休') + xsPal - 1 + i) % 8]);
+        let doorStart = doorOrder[0]; // 值使门
+        let doorIdx2 = doorOrder.indexOf(doorStart);
+        for (let i = 0; i < 8; i++) {
+            let pal = ((zhishiPal - 1 + i) % 9) + 1;
+            if (pal === 5) pal = 2; // 寄坤
+            tpDoor[pal] = doorOrder[i];
+        }
+
+        // 神盘
+        let tpSpirit = {};
+        let spirits = isYang ? QM_SPIRITS_YANG : QM_SPIRITS_YIN;
+        for (let i = 0; i < 8; i++) {
+            let pal = ((shiGanPal - 1 + i) % 9) + 1;
+            if (pal === 5) pal = 2;
+            tpSpirit[pal] = spirits[i];
+        }
+
+        // 天盘奇仪 (随天盘星旋转 = 地盘奇仪旋转)
+        let tpYi = {};
+        let rotOffset = (shiGanPal - ju + 9) % 9;
+        for (let pal = 1; pal <= 9; pal++) {
+            let oldPal = flight[(flight.indexOf(pal) - rotOffset + 9) % 9];
+            tpYi[pal] = dp[oldPal] || '';
+        }
+
+        // 暗干（值使门起）
+        let ag = {};
+        let agStart = zhishiPal;
+        for (let i = 0; i < 10; i++) {
+            let pal = ((agStart - 1 + i) % 9) + 1;
+            if (pal === 5) pal = 2;
+            if (!ag[pal]) ag[pal] = TIANGAN[(TIANGAN.indexOf(hourGan) + i) % 10];
+        }
+
+        // 空亡
+        let kwZhi = getQimenKongWang(dayGZ.gzIdx);
+        let kwPalaces = new Set();
+        for (let pal = 1; pal <= 9; pal++) {
+            let dzs = QM_DZ[pal].split('');
+            dzs.forEach(d => { if (kwZhi.includes(DIZHI.indexOf(d))) kwPalaces.add(pal); });
+        }
+
+        // 马星
+        let maPal = getQimenMaXingPalace(hourZhiIdx);
+
+        // 显示
+        const matterText = document.getElementById('qimenMatter').value.trim();
+        let info = (isYang ? '阳遁' : '阴遁') + ju + '局　' +
+            '日' + dayGZ.gan + dayGZ.zhi + '　时' + hourGan + hourZhi + '　' +
+            '值符' + zhifuStar + '　值使' + doorStart +
+            (matterText ? '　事由：' + matterText : '');
+        document.getElementById('qimenResult').style.display = 'block';
+        document.getElementById('qimenInfo').innerHTML = info;
+
+        let gridHtml = '';
+        let gridOrder = [4,9,2,3,5,7,8,1,6];
+        gridOrder.forEach(pal => {
+            let cells = [];
+            let dpyi = dp[pal] || '';
+            let dpxCls = WX_CLASS[GAN_WX[dpyi]] || '';
+            let star = tpStar[pal] || '';
+            let tpyi = tpYi[pal] || '';
+            let tyCls = WX_CLASS[GAN_WX[tpyi]] || '';
+            let door = tpDoor[pal] || '';
+            let spirit = tpSpirit[pal] || '';
+            let agan = ag[pal] || '';
+            let agCls = WX_CLASS[GAN_WX[agan]] || '';
+
+            // Palace header
+            cells.push('<div class="qm-palace">' + QM_NAMES[pal] + '宫 ' + (QM_DZ[pal]||'中') + '</div>');
+            // Star + heaven yi
+            cells.push('<div class="qm-star">' + star + ' <span class="' + tyCls + '">' + tpyi + '</span></div>');
+            // Door
+            cells.push('<div class="qm-door">' + (door || '—') + '</div>');
+            // Spirit
+            cells.push('<div class="qm-spirit">' + (spirit || '—') + '</div>');
+            // Earth yi
+            cells.push('<div class="qm-dp">地<span class="' + dpxCls + '">' + dpyi + '</span></div>');
+            // 暗干
+            if (agan) cells.push('<div class="qm-ag">暗<span class="' + agCls + '">' + agan + '</span></div>');
+            // Markers
+            let markers = [];
+            if (tpyi) {
+                let jx = qimenJiXing(tpyi, pal);
+                let rm = qimenRuMu(tpyi, pal);
+                if (jx && rm) markers.push('<span class="qm-jxrm">入墓+刑</span>');
+                else if (jx) markers.push('<span class="qm-jx">击刑</span>');
+                else if (rm) markers.push('<span class="qm-jxrm">入墓</span>');
+            }
+            if (kwPalaces.has(pal)) markers.push('<span class="qm-kw">空亡</span>');
+            if (pal === maPal) markers.push('<span class="qm-ma">马星</span>');
+            if (markers.length > 0) cells.push('<div style="margin-top:3px;">' + markers.join(' ') + '</div>');
+
+            gridHtml += '<div class="qimen-cell">' + cells.join('') + '</div>';
+        });
+        document.getElementById('qimenGrid').innerHTML = gridHtml;
+
+        document.getElementById('qimenLegend').innerHTML =
+            '<span style="color:#c77dff;">击刑</span> <span style="color:#5b8def;">入墓/入墓+击刑</span> <span style="color:#ff6b6b;">空亡</span> <span style="color:#4caf50;">马星</span>';
+        document.getElementById('qimenResult').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    </script>
+</body>
+</html>
