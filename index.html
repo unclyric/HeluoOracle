@@ -9,19 +9,18 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'PingFang SC','Microsoft YaHei','SimHei',sans-serif;
-            background:#07070b;color:#d0d0d0;min-height:100vh;
+            background:#06060a;color:#c8c8c8;min-height:100vh;
         }
-        /* 背景层：柔光 + 暗纹 */
+        /* 背景层：柔光 + 暗纹 + 丝质纹理 */
         body::after {
             content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
             background:
-                /* 极光渐变 */
-                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(160,130,80,0.04) 0%, transparent 50%),
-                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(120,100,60,0.03) 0%, transparent 50%),
-                radial-gradient(ellipse 50% 50% at 50% 40%, rgba(100,80,50,0.02) 0%, transparent 60%),
-                /* 细点阵纹理 */
-                radial-gradient(circle 1px, rgba(180,150,100,0.06) 1px, transparent 1px);
-            background-size:100% 100%,100% 100%,100% 100%,24px 24px;
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(160,130,80,0.05) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(120,100,60,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 50% at 50% 40%, rgba(100,80,50,0.025) 0%, transparent 60%),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(180,150,100,0.012) 2px, rgba(180,150,100,0.012) 3px),
+                radial-gradient(circle 1px, rgba(180,150,100,0.05) 1px, transparent 1px);
+            background-size:100% 100%,100% 100%,100% 100%,100% 6px,24px 24px;
         }
         /* 祥云 + 远山装饰 */
         body::before {
@@ -51,15 +50,15 @@
             text-shadow:none;
         }
         h2 {
-            color:#d8c8a8;margin:15px 0 10px;border-bottom:1px solid #2a2a2a;padding-bottom:6px;
-            font-size:1.15em;letter-spacing:1px;
+            color:#d4c4a0;margin:18px 0 12px;border-bottom:1px solid #222225;padding-bottom:7px;
+            font-size:1.1em;letter-spacing:2px;font-weight:600;
         }
 
         /* 输入区域 */
         .input-section {
-            background: linear-gradient(180deg, #111114 0%, #0e0e11 100%);
-            border:1px solid #25252a;border-radius:12px;padding:20px;margin-bottom:20px;margin-top:20px;
-            box-shadow:0 2px 12px rgba(0,0,0,0.3);
+            background: linear-gradient(180deg, #0f0f14 0%, #0c0c10 100%);
+            border:1px solid #1f1f24;border-radius:14px;padding:22px;margin-bottom:22px;margin-top:22px;
+            box-shadow:0 1px 2px rgba(0,0,0,0.5),0 4px 12px rgba(0,0,0,0.3);
         }
         .input-row { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-bottom: 15px; }
         .input-group { display: flex; flex-direction: column; }
@@ -86,9 +85,9 @@
         /* 命盘区域 */
         .chart-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .chart-container {
-            background: linear-gradient(180deg, #111114, #0e0e11);
-            border:1px solid #25252a;border-radius:12px;padding:15px;
-            box-shadow:0 2px 10px rgba(0,0,0,0.25);
+            background: linear-gradient(180deg, #0f0f14, #0c0c10);
+            border:1px solid #1f1f24;border-radius:14px;padding:15px;
+            box-shadow:0 1px 2px rgba(0,0,0,0.5),0 4px 12px rgba(0,0,0,0.3);
         }
 
         /* 十二宫格 */
@@ -123,8 +122,9 @@
 
         /* 解读区域 */
         .interpretation {
-            background:linear-gradient(180deg,#111114,#0e0e11);border:1px solid #25252a;
-            border-radius:12px;padding:15px;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.25);
+            background:linear-gradient(180deg,#0f0f14,#0c0c10);border:1px solid #1f1f24;
+            border-radius:14px;padding:16px;margin-top:22px;margin-bottom:22px;
+            box-shadow:0 1px 2px rgba(0,0,0,0.5),0 4px 12px rgba(0,0,0,0.3);
         }
         .interpretation-section { margin-bottom: 15px; }
         .interpretation-title { color: #ffffff; font-size: 16px; margin-bottom: 8px; }
@@ -135,21 +135,68 @@
 
         /* 小六壬 */
         .liuren-section {
-            background:linear-gradient(180deg,#111114,#0e0e11);border:1px solid #25252a;
-            border-radius:12px;padding:20px;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.25);
+            background:linear-gradient(180deg,#0f0f14,#0c0c10);border:1px solid #1f1f24;
+            border-radius:14px;padding:20px;margin-top:22px;margin-bottom:22px;
+            box-shadow:0 1px 2px rgba(0,0,0,0.5),0 4px 12px rgba(0,0,0,0.3);
         }
-        .liuren-result { font-size:18px;text-align:center;padding:20px;background:#0e0e11;border:1px solid #25252a;border-radius:8px;margin-top:15px; }
+        .liuren-result { font-size:18px;text-align:center;padding:20px;background:#0c0c10;border:1px solid #1f1f24;border-radius:10px;margin-top:15px; }
 
         /* 六爻起卦 */
         .liuyao-section {
-            background:linear-gradient(180deg,#111114,#0e0e11);border:1px solid #25252a;
-            border-radius:12px;padding:20px;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.25);
+            background:linear-gradient(180deg,#0f0f14,#0c0c10);border:1px solid #1f1f24;
+            border-radius:14px;padding:20px;margin-top:22px;margin-bottom:22px;
+            box-shadow:0 1px 2px rgba(0,0,0,0.5),0 4px 12px rgba(0,0,0,0.3);
         }
-        .coin-area { display: flex; justify-content: center; gap: 30px; margin: 20px 0; flex-wrap: wrap; }
-        .coin { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; transition: all 0.3s; border: 3px solid #444; user-select: none; }
-        .coin.head { background: #1a1a1a; color: #fff; border-color: #666; }
-        .coin.tail { background: #fff; color: #000; border-color: #fff; }
-        .coin:hover { transform: scale(1.1); }
+        .coin-area { display:flex;justify-content:center;gap:44px;margin:24px 0;flex-wrap:wrap; }
+        .coin-wrap { display:flex;flex-direction:column;align-items:center;gap:10px; }
+        .coin-label { font-size:12px;color:#777;letter-spacing:2px; }
+        .coin {
+            width:84px;height:84px;border-radius:50%;cursor:pointer;
+            transition:all 0.35s cubic-bezier(.4,0,.2,1);
+            user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+            position:relative;display:flex;align-items:center;justify-content:center;
+            border:3px solid rgba(0,0,0,0.5);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,0.6),
+                0 0 0 4px rgba(180,140,90,0.25),
+                0 5px 16px rgba(0,0,0,0.55),
+                inset 0 1px 2px rgba(255,255,255,0.06);
+        }
+        .coin.head {
+            background:
+                radial-gradient(circle at 42% 32%, rgba(255,240,200,0.55) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, #d4b068 0%, #c49a48 25%, #a87828 55%, #8a5a18 80%, #6a4010 100%);
+        }
+        .coin.tail {
+            border-color:rgba(0,0,0,0.35);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,0.45),
+                0 0 0 4px rgba(200,180,130,0.3),
+                0 5px 16px rgba(0,0,0,0.45),
+                inset 0 1px 2px rgba(255,255,255,0.1);
+            background:
+                radial-gradient(circle at 42% 32%, rgba(255,252,230,0.6) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, #efe0a8 0%, #e0c870 25%, #c8a848 55%, #a88828 80%, #886818 100%);
+        }
+        /* 内郭 */
+        .coin::before {
+            content:'';position:absolute;width:52px;height:52px;border-radius:50%;
+            border:1.5px solid rgba(0,0,0,0.3);
+            box-shadow:inset 0 0 3px rgba(0,0,0,0.15),0 1px 0 rgba(255,255,255,0.06);
+        }
+        /* 方孔 */
+        .coin::after {
+            content:'';position:absolute;width:18px;height:18px;
+            background:#0a0806;
+            box-shadow:
+                inset 0 2px 3px rgba(0,0,0,0.9),
+                0 0 0 1.5px rgba(0,0,0,0.55),
+                0 0 0 3px rgba(0,0,0,0.2);
+        }
+        .coin:hover { transform:scale(1.12) rotate(6deg) translateY(-4px); }
+        .coin.head:hover { box-shadow:0 0 0 1px rgba(0,0,0,0.6),0 0 0 4px rgba(180,140,90,0.3),0 8px 22px rgba(0,0,0,0.65),inset 0 1px 2px rgba(255,255,255,0.06); }
+        .coin.tail:hover { box-shadow:0 0 0 1px rgba(0,0,0,0.45),0 0 0 4px rgba(200,180,130,0.35),0 8px 22px rgba(0,0,0,0.55),inset 0 1px 2px rgba(255,255,255,0.1); }
+        .coin:active { transform:scale(0.9);transition:all 0.08s; }
         .yao-record { display: flex; flex-direction: column-reverse; align-items: center; gap: 4px; margin: 15px 0; }
         .yao-line { display: flex; align-items: center; gap: 10px; font-size: 14px; min-height: 28px; }
         .yao-line .yao-symbol { font-family: monospace; font-size: 20px; letter-spacing: 4px; color: #fff; }
@@ -218,8 +265,9 @@
 
         /* 今日面板 */
         .today-panel {
-            background:linear-gradient(180deg,#111114,#0e0e11);border:1px solid #25252a;
-            border-radius:12px;padding:16px 20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.25);
+            background:linear-gradient(180deg,#0f0f14,#0c0c10);border:1px solid #1f1f24;
+            border-radius:14px;padding:16px 20px;margin-bottom:22px;
+            box-shadow:0 1px 2px rgba(0,0,0,0.5),0 4px 12px rgba(0,0,0,0.3);
         }
         .today-pillar { display:flex;flex-direction:column;align-items:center;min-width:60px; }
         .today-pillar-label { font-size:10px;color:#555;margin-bottom:2px; }
@@ -275,8 +323,13 @@
         .liuyao-section::after { bottom:6px;left:6px;border-bottom:1px solid rgba(200,170,120,0.4);border-left:1px solid rgba(200,170,120,0.4); }
         .interpretation::before { bottom:6px;right:6px;border-bottom:1px solid rgba(200,170,120,0.4);border-right:1px solid rgba(200,170,120,0.4); }
         h2::after { content:'';display:block;width:40px;height:2px;background:linear-gradient(90deg,rgba(200,170,120,0.6),transparent);margin-top:4px;border-radius:1px; }
+        .input-section,.today-panel,.liuren-section,.liuyao-section,.interpretation,.chart-container {
+            transition:border-color 0.6s ease,box-shadow 0.6s ease;
+        }
         .input-section:hover,.today-panel:hover,.liuren-section:hover,.liuyao-section:hover,
-        .interpretation:hover,.chart-container:hover { border-color:#302820;transition:border-color 0.5s; }
+        .interpretation:hover,.chart-container:hover {
+            border-color:#2a241e;box-shadow:0 1px 2px rgba(0,0,0,0.5),0 4px 16px rgba(0,0,0,0.4);
+        }
         .bazi-pillar { transition:all 0.3s; }
         .bazi-pillar:hover { border-color:#3a3028;transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.4); }
         .qimen-cell { transition:all 0.3s; }
@@ -307,10 +360,7 @@
         /* 页边暗角 */
         .vignette { position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
             background:radial-gradient(ellipse at center,transparent 60%,rgba(4,4,6,0.5) 100%); }
-        /* 面板叠影层次 */
-        .input-section,.today-panel,.liuren-section,.liuyao-section,.interpretation,.chart-container {
-            box-shadow:0 1px 3px rgba(0,0,0,0.4),0 4px 16px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.01);
-        }
+        /* 面板统一样式已在上方各选择器中定义 */
         /* 装饰分隔线 */
         .section-divider { width:100%;max-width:200px;margin:6px auto 12px;height:1px;
             background:linear-gradient(90deg,transparent,rgba(180,150,110,0.25),transparent);position:relative; }
@@ -326,7 +376,6 @@
         .gold-dust:nth-child(5){top:42%;left:82%;animation:goldDust 5s infinite 3s}
         .gold-dust:nth-child(6){top:80%;left:15%;animation:goldDust 7.5s infinite 1.5s}
         /* 内发光卡片 */
-        .today-panel { box-shadow:0 1px 3px rgba(0,0,0,0.4),0 4px 16px rgba(0,0,0,0.25),inset 0 0 30px rgba(180,150,110,0.02); }
         .qimen-cell:hover { box-shadow:inset 0 0 20px rgba(180,150,110,0.04); }
         /* 渐变底色微动 */
         /* 背景光缓慢漂移 */
@@ -407,9 +456,9 @@
             <p style="color:#666;font-size:13px;">心中默念所测之事，点击铜钱掷出，共六次成卦。字为背(3)，花为面(2)。</p>
             <div class="yao-progress" id="yaoProgress">第 1 爻 / 共 6 爻（从下往上）</div>
             <div class="coin-area">
-                <div class="coin head" id="coin1" onclick="flipCoin(0)">字</div>
-                <div class="coin head" id="coin2" onclick="flipCoin(1)">字</div>
-                <div class="coin head" id="coin3" onclick="flipCoin(2)">字</div>
+                <div class="coin-wrap"><div class="coin head" id="coin1" onclick="flipCoin(0)"></div><span class="coin-label" id="coinLabel1">字</span></div>
+                <div class="coin-wrap"><div class="coin head" id="coin2" onclick="flipCoin(1)"></div><span class="coin-label" id="coinLabel2">字</span></div>
+                <div class="coin-wrap"><div class="coin head" id="coin3" onclick="flipCoin(2)"></div><span class="coin-label" id="coinLabel3">字</span></div>
             </div>
             <div style="text-align:center;margin:10px 0;">
                 <button class="btn" onclick="throwCoins()" id="throwBtn">掷铜钱</button>
@@ -2293,7 +2342,7 @@
         const lunar = solarToLunarApprox(year, month, day);
         const lunarGZ = getGanZhiYear(lunar.lunarYear);
         const lMonthNames = ['正','二','三','四','五','六','七','八','九','十','十一','腊'];
-        const lDayNames = ['','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+        const lDayNames = ['','初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
             '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
             '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
         document.getElementById('todayLunar').innerHTML =
@@ -2653,12 +2702,13 @@
     function updateCoinDisplay() {
         for (let i = 0; i < 3; i++) {
             let el = document.getElementById('coin' + (i + 1));
+            let lb = document.getElementById('coinLabel' + (i + 1));
             if (liuyaoState.coins[i]) {
                 el.className = 'coin head';
-                el.textContent = '字';
+                if (lb) lb.textContent = '字';
             } else {
                 el.className = 'coin tail';
-                el.textContent = '花';
+                if (lb) lb.textContent = '花';
             }
         }
     }
