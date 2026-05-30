@@ -2171,11 +2171,13 @@
 
     function setNowTime() {
         const now = new Date();
-        // 获取农历时间（简化：使用公历近似）
-        let lunarMonth = now.getMonth() + 1;
-        let lunarDay = now.getDate();
+        const year = now.getFullYear(), month = now.getMonth() + 1, day = now.getDate();
+        // 公历转农历
+        const lunar = solarToLunarApprox(year, month, day);
+        let lunarMonth = lunar.lunarMonth;
+        let lunarDay = lunar.lunarDay;
         let hour = now.getHours();
-        let hourIndex = Math.floor((hour + 1) / 2) % 12 + 1; // 转换为时辰序号
+        let hourIndex = Math.floor((hour + 1) / 2) % 12 + 1;
 
         document.getElementById('lrMonth').value = lunarMonth;
         document.getElementById('lrDay').value = lunarDay;
