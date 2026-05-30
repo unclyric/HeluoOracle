@@ -139,9 +139,10 @@
         .interpretation-section { margin-bottom: 15px; }
         .interpretation-title { color: #ffffff; font-size: 16px; margin-bottom: 8px; }
         .interpretation-content { font-size: 14px; line-height: 1.6; color: #ccc; }
-        .good-text { color: #ffffff; font-weight: bold; }
-        .bad-text { color: #ff6666; }
-        .pattern-found { background: #1a1a1a; padding: 8px; border-radius: 5px; margin: 5px 0; border-left: 3px solid #fff; }
+        .good-text { color:#5aad5a;font-weight:bold; }
+        .bad-text { color:#e04040;font-weight:bold; }
+        .neutral-text { color:#c0a060;font-weight:bold; }
+        .pattern-found { background:#0f0f14;padding:10px 12px;border-radius:6px;margin:6px 0;border-left:3px solid #c0a060; }
 
         /* 小六壬 */
         .liuren-section {
@@ -534,30 +535,20 @@
                 </div>
                 <div class="input-group">
                     <label>出生时间</label>
-                    <input type="time" id="birthTime" value="12:00">
+                    <input type="time" id="birthTime" value="12:00" onchange="autoCalcSolarTime()">
                 </div>
                 <div class="input-group">
                     <label>出生地</label>
-                    <select id="birthPlace"></select>
+                    <select id="birthPlace" onchange="autoCalcSolarTime()"></select>
                 </div>
+            </div>
+            <div class="input-row" style="margin-bottom:4px;">
+                <span style="color:#888;font-size:12px;">真太阳时（自动计算）：</span>
+                <span style="color:#c8b078;font-size:14px;font-weight:bold;" id="autoSolarTime">--:--</span>
             </div>
             <div id="solarTimeInfo" class="solar-time-info" style="display:none;"></div>
             <button class="btn" onclick="generateChart()">排盘并解读</button>
             <button class="btn btn-secondary" onclick="calcBazi()" style="margin-left:10px;">排八字</button>
-
-            <!-- 手动输入真太阳时 -->
-            <div style="margin-top:15px;padding-top:15px;border-top:1px solid #333;">
-                <div class="input-row">
-                    <div class="input-group">
-                        <label>真太阳时（手动输入）</label>
-                        <input type="time" id="manualSolarTime" value="12:00">
-                    </div>
-                    <div class="input-group" style="justify-content:flex-end;">
-                        <button class="btn btn-secondary" onclick="generateChart(true)" style="margin-top:18px;">直接用真太阳时排盘</button>
-                    </div>
-                </div>
-                <p style="color:#666;font-size:12px;margin-top:5px;">如果已知真太阳时，可直接输入跳过自动计算。仍需填写上方公历生辰用于排盘。</p>
-            </div>
         </div>
 
         <!-- 命盘区域 -->
@@ -638,19 +629,16 @@
                 </div>
                 <div class="input-group">
                     <label>出生时间</label>
-                    <input type="time" id="baziBirthTime" value="12:00">
+                    <input type="time" id="baziBirthTime" value="12:00" onchange="autoCalcBaziSolarTime()">
                 </div>
                 <div class="input-group">
                     <label>出生地</label>
-                    <select id="baziBirthPlace"></select>
+                    <select id="baziBirthPlace" onchange="autoCalcBaziSolarTime()"></select>
                 </div>
-                <div class="input-group">
-                    <label>真太阳时</label>
-                    <div style="display:flex;align-items:center;gap:6px;">
-                        <input type="time" id="baziSolarTime" value="12:00" style="padding:8px 12px;border:1px solid #444;border-radius:5px;background:#1a1a1a;color:#e0e0e0;font-size:14px;width:130px;">
-                        <button class="btn btn-secondary" onclick="autoCalcBaziSolarTime()" style="font-size:12px;padding:6px 10px;white-space:nowrap;">自动计算</button>
-                    </div>
-                </div>
+            </div>
+            <div class="input-row" style="margin-bottom:4px;">
+                <span style="color:#888;font-size:12px;">真太阳时（自动计算）：</span>
+                <span style="color:#c8b078;font-size:14px;font-weight:bold;" id="baziAutoSolarTime">--:--</span>
             </div>
             <button class="btn" onclick="calcBazi()">排八字</button>
         </div>
@@ -726,7 +714,7 @@
 
     // 已知的闰月数据 [闰月序号, 0=无闰月]
     const LEAP_MONTH = {
-        2017:6, 2020:4, 2023:2, 2025:6, 2028:5
+        2001:4,2004:2,2006:7,2009:5,2012:4,2014:9,2017:6,2020:4,2023:2,2025:6,2028:5
     };
 
     // 构建农历年月表：返回 {numMonths, leapMonth, monthStartsDOY[]}
@@ -1236,13 +1224,12 @@
     }
 
     // 安辅星
-    function anAuxStars(yearGan, yearZhi, hour, mingPos) {
+    function anAuxStars(yearGan, yearZhi, hour, mingPos, lunarMonth) {
         const auxStars = {};
 
-        // 左辅右弼（以辰宫起左辅，顺数至月；以戌宫起右弼，逆数至月）
-        // 简化：左辅在命宫前5宫，右弼在命宫后5宫
-        let zuofuPos = (mingPos + 5) % 12;
-        let youbiPos = (mingPos - 5 + 12) % 12;
+        // 左辅右弼（辰宫起正月顺数至生月=左辅；戌宫起正月逆数至生月=右弼）
+        let zuofuPos = (4 + lunarMonth - 1) % 12;
+        let youbiPos = (10 - (lunarMonth - 1) + 12) % 12;
         if(!auxStars[zuofuPos]) auxStars[zuofuPos] = [];
         auxStars[zuofuPos].push('左辅');
         if(!auxStars[youbiPos]) auxStars[youbiPos] = [];
@@ -1287,7 +1274,7 @@
         auxStars[lucunPos].push('禄存');
 
         // 天马（以年支安星）
-        const TIANMA_POS = {'寅':5,'申':11,'巳':2,'亥':8,'子':1,'午':7,'丑':0,'未':6,'卯':3,'酉':9,'辰':4,'戌':10};
+        const TIANMA_POS = {'寅':8,'午':8,'戌':8,'申':2,'子':2,'辰':2,'巳':11,'酉':11,'丑':11,'亥':5,'卯':5,'未':5};
         let tianmaPos = TIANMA_POS[yearZhi] || 5;
         if(!auxStars[tianmaPos]) auxStars[tianmaPos] = [];
         auxStars[tianmaPos].push('天马');
@@ -1302,17 +1289,21 @@
         auxStars[tuoluoPos].push('陀罗');
 
         // 火星铃星（以年支和时辰安星）
-        // 简化算法
-        let huoxingPos = (mingPos + 2) % 12;
-        let lingxingPos = (mingPos + 3) % 12;
+        const HUO_START = {'寅':1,'午':1,'戌':1,'申':3,'子':3,'辰':3,'巳':10,'酉':10,'丑':10,'亥':5,'卯':5,'未':5};
+        const LING_START = {'寅':3,'午':3,'戌':3,'申':10,'子':10,'辰':10,'巳':10,'酉':10,'丑':10,'亥':10,'卯':10,'未':10};
+        let huoStart = HUO_START[yearZhi] || 2;
+        let lingStart = LING_START[yearZhi] || 10;
+        let huoxingPos = (huoStart + hour - 1) % 12;
+        let lingxingPos = (lingStart + hour - 1) % 12;
         if(!auxStars[huoxingPos]) auxStars[huoxingPos] = [];
         auxStars[huoxingPos].push('火星');
         if(!auxStars[lingxingPos]) auxStars[lingxingPos] = [];
         auxStars[lingxingPos].push('铃星');
 
-        // 天空地劫（以时辰安星）
-        let tiankongPos = (hour + 1) % 12;
-        let dijiePos = (hour + 7) % 12;
+        // 天空地劫（以时支安星：从亥宫起子时，天空逆数，地劫顺数）
+        let haishi = 11; // 亥宫
+        let tiankongPos = (haishi - (hour - 1) + 12) % 12;
+        let dijiePos = (haishi + (hour - 1)) % 12;
         if(!auxStars[tiankongPos]) auxStars[tiankongPos] = [];
         auxStars[tiankongPos].push('天空');
         if(!auxStars[dijiePos]) auxStars[dijiePos] = [];
@@ -1369,7 +1360,20 @@
 
     // ==================== 主排盘函数 ====================
     // useManualSolarTime: true 时使用下方手动输入的真太阳时，跳过自动计算
-    function generateChart(useManualSolarTime) {
+    // 自动计算真太阳时并显示
+    function autoCalcSolarTime() {
+        const year = parseInt(document.getElementById('birthYear').value);
+        const month = parseInt(document.getElementById('birthMonth').value);
+        const day = parseInt(document.getElementById('birthDay').value);
+        const birthTimeStr = document.getElementById('birthTime').value;
+        const bps = document.getElementById('birthPlace');
+        const city = bps.options[bps.selectedIndex].value;
+        const lon = CITY_LONGITUDE[city] || 120;
+        const si = calcTrueSolarTime(birthTimeStr, lon, month, day, year);
+        document.getElementById('autoSolarTime').textContent = si.trueSolarTime;
+    }
+
+    function generateChart() {
         const year = parseInt(document.getElementById('birthYear').value);
         const month = parseInt(document.getElementById('birthMonth').value);
         const day = parseInt(document.getElementById('birthDay').value);
@@ -1382,46 +1386,22 @@
         const selectedCity = birthPlaceSelect.options[birthPlaceSelect.selectedIndex].value;
         const cityLongitude = CITY_LONGITUDE[selectedCity] || 120;
 
-        // 计算或读取真太阳时
-        let solarInfo;
-        if (useManualSolarTime) {
-            const manualTime = document.getElementById('manualSolarTime').value;
-            solarInfo = {
-                beijingTime: birthTimeStr,
-                trueSolarTime: manualTime,
-                eotMinutes: '--',
-                longitudeCorrection: '--',
-                totalDiffMinutes: '--'
-            };
-        } else {
-            solarInfo = calcTrueSolarTime(birthTimeStr, cityLongitude, month, day, year);
-        }
+        const solarInfo = calcTrueSolarTime(birthTimeStr, cityLongitude, month, day, year);
         const hour = getShiChenFromTime(solarInfo.trueSolarTime);
 
         // 显示真太阳时信息
         const solarTimeInfoEl = document.getElementById('solarTimeInfo');
         solarTimeInfoEl.style.display = 'block';
-        if (useManualSolarTime) {
-            solarTimeInfoEl.innerHTML =
-                `<div><b>姓名：</b>${displayName}</div>` +
-                `<div><b>公历生日：</b>${year}年${month}月${day}日</div>` +
-                `<div><b>北京时间：</b>${birthTimeStr}</div>` +
-                `<div><b>真太阳时（手动）：</b>${solarInfo.trueSolarTime}</div>` +
-                `<div><b>出生地：</b>${selectedCity}</div>` +
-                `<div><b>对应时辰：</b>${DIZHI[hour]}时</div>` +
-                `<div style="color:#666;font-size:12px;">已跳过真太阳时自动计算，直接使用手动输入值</div>`;
-        } else {
-            solarTimeInfoEl.innerHTML =
-                `<div><b>姓名：</b>${displayName}</div>` +
-                `<div><b>公历生日：</b>${year}年${month}月${day}日</div>` +
-                `<div><b>北京时间：</b>${solarInfo.beijingTime}</div>` +
-                `<div><b>真太阳时：</b>${solarInfo.trueSolarTime}</div>` +
-                `<div><b>出生地：</b>${selectedCity}（经度 ${cityLongitude}°）</div>` +
-                `<div><b>经度修正：</b>${solarInfo.longitudeCorrection} 分钟</div>` +
-                `<div><b>均时差（EoT）：</b>${solarInfo.eotMinutes} 分钟</div>` +
-                `<div><b>总修正：</b>${solarInfo.totalDiffMinutes} 分钟</div>` +
-                `<div><b>对应时辰：</b>${DIZHI[hour]}时</div>`;
-        }
+        solarTimeInfoEl.innerHTML =
+            `<div><b>姓名：</b>${displayName}</div>` +
+            `<div><b>公历生日：</b>${year}年${month}月${day}日</div>` +
+            `<div><b>北京时间：</b>${solarInfo.beijingTime}</div>` +
+            `<div><b>真太阳时：</b>${solarInfo.trueSolarTime}</div>` +
+            `<div><b>出生地：</b>${selectedCity}（经度 ${cityLongitude}°）</div>` +
+            `<div><b>经度修正：</b>${solarInfo.longitudeCorrection} 分钟</div>` +
+            `<div><b>均时差（EoT）：</b>${solarInfo.eotMinutes} 分钟</div>` +
+            `<div><b>总修正：</b>${solarInfo.totalDiffMinutes} 分钟</div>` +
+            `<div><b>对应时辰：</b>${DIZHI[hour]}时</div>`;
 
         // 公历→农历转换，用于紫微斗数排盘
         const lunarDate = solarToLunarApprox(year, month, day);
@@ -1457,7 +1437,7 @@
         const mainStars = anMainStars(ziweiPos, tianfuPos);
 
         // 安辅星
-        const auxStars = anAuxStars(yearGan, yearZhi, hour, mingPos);
+        const auxStars = anAuxStars(yearGan, yearZhi, hour, mingPos, lunarMonth);
 
         // 安四化
         const fourHua = anFourHua(yearGan);
@@ -2117,7 +2097,7 @@
         const city = bps.options[bps.selectedIndex].value;
         const lon = CITY_LONGITUDE[city] || 120;
         const si = calcTrueSolarTime(birthTimeStr, lon, month, day, year);
-        document.getElementById('baziSolarTime').value = si.trueSolarTime;
+        document.getElementById('baziAutoSolarTime').textContent = si.trueSolarTime;
     }
 
     function calcBazi() {
@@ -2133,8 +2113,8 @@
         const selectedCity = bps.options[bps.selectedIndex].value;
         const cityLongitude = CITY_LONGITUDE[selectedCity] || 120;
 
-        // 真太阳时：优先使用手动输入值
-        const trueTime = document.getElementById('baziSolarTime').value;
+        // 真太阳时：自动计算
+        const trueTime = document.getElementById('baziAutoSolarTime').textContent;
         const hourZhiIdx = getShiChenFromTime(trueTime);
 
         const dayGZ = calcDayGanZhi(year, month, day);
@@ -2366,36 +2346,50 @@
         let html = '';
 
         if(type === 'stars') {
-            html = '<h3 style="color:#ffd700;">主星详解</h3>';
-            for(let star in KNOWLEDGE.stars) {
-                if(KNOWLEDGE.stars[star].type === '主星') {
-                    html += `<div class="star-info"><span class="star-name">${star}</span> (${KNOWLEDGE.stars[star].system})：${KNOWLEDGE.stars[star].meaning}</div>`;
+            let types = [
+                {key:'主星',title:'主星详解',color:'#e8d5b0',border:'#3a3020'},
+                {key:'吉星',title:'吉星详解',color:'#5aad5a',border:'#2a3a1a'},
+                {key:'煞星',title:'煞星详解',color:'#e04040',border:'#3a1a1a'},
+                {key:'财星',title:'财星/桃花/辅星',color:'#c0a060',border:'#3a2a10'},
+                {key:'凶星',title:'凶星详解',color:'#e04040',border:'#3a1a1a'}
+            ];
+            let shown = new Set();
+            types.forEach(tp => {
+                let has = false;
+                for(let star in KNOWLEDGE.stars) {
+                    if(KNOWLEDGE.stars[star].type === tp.key || (tp.key==='财星' && !shown.has(star) && !['主星','吉星','煞星','凶星'].includes(KNOWLEDGE.stars[star].type))) {
+                        if(!has) { html += '<h3 style="color:' + tp.color + ';margin-top:14px;font-size:14px;">' + tp.title + '</h3>'; has = true; }
+                        let nature = KNOWLEDGE.stars[star].nature;
+                        html += '<div class="star-info" style="border-left:3px solid ' + tp.border + ';">' +
+                            '<span class="star-name" style="color:' + tp.color + ';">' + star + '</span>' +
+                            (nature ? ' <span style="color:#888;font-size:10px;">[' + nature + ']</span>' : '') +
+                            '<br><span style="color:#aaa;">' + KNOWLEDGE.stars[star].meaning + '</span></div>';
+                        shown.add(star);
+                    }
                 }
-            }
-            html += '<h3 style="color:#ffd700;margin-top:15px;">吉星详解</h3>';
-            for(let star in KNOWLEDGE.stars) {
-                if(KNOWLEDGE.stars[star].type === '吉星') {
-                    html += `<div class="star-info"><span class="star-name">${star}</span>：${KNOWLEDGE.stars[star].meaning}</div>`;
-                }
-            }
-            html += '<h3 style="color:#ff6b6b;margin-top:15px;">煞星详解</h3>';
-            for(let star in KNOWLEDGE.stars) {
-                if(KNOWLEDGE.stars[star].type === '煞星') {
-                    html += `<div class="star-info"><span class="star-name" style="color:#ff6b6b;">${star}</span>：${KNOWLEDGE.stars[star].meaning}</div>`;
-                }
-            }
+            });
         }
 
         if(type === 'palaces') {
             for(let palace in KNOWLEDGE.palaces) {
-                html += `<div class="star-info"><span class="star-name">${palace}</span>：${KNOWLEDGE.palaces[palace].meaning}<br><small style="color:#87ceeb;">相关：${KNOWLEDGE.palaces[palace].related}</small></div>`;
+                html += '<div class="star-info" style="border-left:3px solid #2a3020;">' +
+                    '<span class="star-name" style="color:#d4c4a0;">' + palace + '</span>' +
+                    '<br><span style="color:#aaa;">' + KNOWLEDGE.palaces[palace].meaning + '</span>' +
+                    '<br><small style="color:#7a8a90;">' + KNOWLEDGE.palaces[palace].related + '</small></div>';
             }
         }
 
         if(type === 'patterns') {
             for(let pattern in KNOWLEDGE.patterns) {
-                let levelClass = KNOWLEDGE.patterns[pattern].level === '大吉' || KNOWLEDGE.patterns[pattern].level === '吉' ? 'good-text' : 'bad-text';
-                html += `<div class="star-info"><span class="star-name">${pattern}</span> <span class="${levelClass}">(${KNOWLEDGE.patterns[pattern].level})</span><br>条件：${KNOWLEDGE.patterns[pattern].condition}<br>意义：${KNOWLEDGE.patterns[pattern].meaning}</div>`;
+                let lv = KNOWLEDGE.patterns[pattern].level;
+                let lvCls = (lv==='大吉'||lv==='吉') ? 'good-text' : (lv==='大凶'||lv==='凶') ? 'bad-text' : 'neutral-text';
+                let borderClr = (lv==='大吉'||lv==='吉') ? '#3a5a2a' : (lv==='大凶'||lv==='凶') ? '#5a2020' : '#3a3020';
+                let badgeBg = (lv==='大吉'||lv==='吉') ? '#2a4a1a' : (lv==='大凶'||lv==='凶') ? '#4a1a1a' : '#3a2a10';
+                html += '<div class="star-info" style="border-left:3px solid ' + borderClr + ';">' +
+                    '<span class="star-name">' + pattern + '</span> ' +
+                    '<span style="background:' + badgeBg + ';color:' + (lv==='大吉'||lv==='吉'?'#5aad5a':lv==='大凶'||lv==='凶'?'#e04040':'#c0a060') + ';font-size:10px;padding:1px 6px;border-radius:3px;font-weight:bold;">' + lv + '</span>' +
+                    '<br><span style="color:#888;">条件：</span>' + KNOWLEDGE.patterns[pattern].condition +
+                    '<br><span style="color:#888;">意义：</span>' + KNOWLEDGE.patterns[pattern].meaning + '</div>';
             }
         }
 
