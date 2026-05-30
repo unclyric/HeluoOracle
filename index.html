@@ -2246,6 +2246,12 @@
         });
         html += '</div>';
 
+        // 最终结果
+        let final = stages[2];
+        html += '<div style="font-size:20px;color:#ffd700;margin-bottom:8px;text-align:center;">' +
+            '<span class="' + wxCls(final.name) + '">' + final.name + '</span></div>';
+        html += '<div style="color:#c0c0c0;font-size:14px;line-height:1.7;text-align:center;margin-bottom:12px;">' + final.meaning + '</div>';
+
         // 五行分析
         html += '<div style="background:#0c0c10;border:1px solid #1f1f24;border-radius:8px;padding:10px 14px;font-size:12px;color:#999;line-height:1.8;">';
         html += '<div style="color:#888;margin-bottom:4px;">五行生克分析</div>';
