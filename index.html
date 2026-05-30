@@ -92,18 +92,23 @@
 
         /* 十二宫格 */
         .zwds-chart { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 2px; width: 100%; max-width: 500px; margin: 0 auto; }
-        .palace { border: 1px solid #444; padding: 8px; text-align: center; background: #111; min-height: 120px; position: relative; }
-        .palace.ming { background: #1a1a1a; border-color: #fff; }
-        .palace-title { font-size: 12px; color: #999; margin-bottom: 5px; font-weight: bold; }
-        .palace-stars { font-size: 11px; line-height: 1.4; }
-        .star-main { color: #ffffff; font-weight: bold; }
-        .star-good { color: #cccccc; }
-        .star-bad { color: #888888; }
-        .star-four { font-weight: bold; }
-        .star-ke { color: #aaaaff; }
-        .star-quan { color: #cccccc; }
-        .star-lu { color: #aaaaaa; }
-        .star-ji { color: #ff6666; }
+        .palace {
+            border:1px solid #1f1f24;padding:10px 8px;text-align:center;
+            background:linear-gradient(180deg,#0e0e12,#0a0a0e);min-height:120px;position:relative;
+            transition:background 0.3s,border-color 0.3s;
+        }
+        .palace:hover { background:linear-gradient(180deg,#121216,#0e0e12);border-color:#2a241e; }
+        .palace.ming { background:linear-gradient(180deg,#18181c,#121216);border-color:#c0a060;box-shadow:inset 0 0 20px rgba(200,160,80,0.06); }
+        .palace-title { font-size:12px;color:#888;margin-bottom:6px;font-weight:bold;letter-spacing:1px; }
+        .palace-stars { font-size:11px;line-height:1.5; }
+        .star-main { color:#e8d5b0;font-weight:bold; }
+        .star-good { color:#b0b0b0; }
+        .star-bad { color:#777; }
+        .star-four { font-weight:bold; }
+        .star-ke { color:#8090d0; }
+        .star-quan { color:#b0a090; }
+        .star-lu { color:#a0a0a0; }
+        .star-ji { color:#d06050; }
 
         /* 宫位位置 */
         .p1 { grid-column: 4; grid-row: 1; }
@@ -118,7 +123,12 @@
         .p10 { grid-column: 4; grid-row: 4; }
         .p11 { grid-column: 4; grid-row: 3; }
         .p12 { grid-column: 4; grid-row: 2; }
-        .center-info { grid-column: 2/4; grid-row: 2/4; background: #0a0a0a; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 12px; }
+        .center-info {
+            grid-column:2/4;grid-row:2/4;background:linear-gradient(180deg,#0c0c10,#08080c);
+            display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:12px;
+            border:1px solid #1a1a20;border-radius:4px;
+        }
+        .zwds-chart { gap:2px; }
 
         /* 解读区域 */
         .interpretation {
@@ -276,22 +286,23 @@
         .today-pillar-wx { font-size:10px;color:#777; }
 
         /* 奇门遁甲 */
-        .qimen-grid { display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3px;max-width:600px;margin:0 auto; }
+        .qimen-grid { display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:4px;max-width:600px;min-height:420px;margin:0 auto; }
         .qimen-cell {
-            background:linear-gradient(180deg,#0f0f12,#0a0a0e);border:1px solid #222;
-            padding:10px 8px;display:flex;flex-direction:column;align-items:center;
-            justify-content:center;line-height:1.5;min-height:130px;
+            background:linear-gradient(180deg,#0e0e12,#09090d);border:1px solid #1d1d22;border-radius:8px;
+            padding:12px 8px;display:flex;flex-direction:column;align-items:center;
+            justify-content:center;line-height:1.5;min-height:130px;transition:all 0.3s;
         }
-        .qimen-cell .qm-palace { color:#888;font-size:13px;margin-bottom:4px;border-bottom:1px solid #1a1a1a;padding-bottom:3px;width:100%;text-align:center; }
+        .qimen-cell:nth-child(5) { border-color:#2a2418;background:linear-gradient(180deg,#141210,#0e0c0a); }
+        .qimen-cell .qm-palace { color:#777;font-size:13px;margin-bottom:5px;border-bottom:1px solid #1a1a1a;padding-bottom:4px;width:100%;text-align:center;letter-spacing:1px; }
         .qimen-cell .qm-dp { font-size:14px;margin:2px 0; }
-        .qimen-cell .qm-star { color:#ffd700;font-size:15px;font-weight:bold;margin:1px 0; }
-        .qimen-cell .qm-door { font-size:14px;font-weight:bold;margin:1px 0; }
-        .qimen-cell .qm-spirit { color:#87ceeb;font-size:12px;margin:1px 0; }
-        .qimen-cell .qm-ag { color:#999;font-size:12px;margin:1px 0; }
+        .qimen-cell .qm-star { color:#e8d5b0;font-size:15px;font-weight:bold;margin:2px 0; }
+        .qimen-cell .qm-door { font-size:14px;font-weight:bold;margin:2px 0; }
+        .qimen-cell .qm-spirit { color:#8ab4d0;font-size:12px;margin:2px 0; }
+        .qimen-cell .qm-ag { color:#888;font-size:12px;margin:1px 0; }
         .qimen-cell .qm-jx { color:#c77dff;font-size:12px;margin:1px 0; }
         .qimen-cell .qm-jxrm { color:#5b8def;font-size:12px;margin:1px 0; }
-        .qimen-cell .qm-kw { color:#ff6b6b;font-size:12px;margin:1px 0; }
-        .qimen-cell .qm-ma { color:#4caf50;font-size:12px;margin:1px 0; }
+        .qimen-cell .qm-kw { color:#e06050;font-size:12px;margin:1px 0; }
+        .qimen-cell .qm-ma { color:#5aad5a;font-size:12px;margin:1px 0; }
 
         /* 状态栏 */
         .status-bar {
