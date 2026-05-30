@@ -441,8 +441,7 @@
         <!-- 小六壬 -->
         <div class="liuren-section">
             <h2>小六壬速断 <span style="font-size:11px;color:#4a4035;font-weight:normal;float:right;margin-top:2px;">知命不惧 日日自新</span></h2>
-            <p style="color:#888;font-size:12px;margin-bottom:14px;padding-left:2px;">月上起日，日上起时，五行生克断吉凶</p>
-            <div class="input-row" style="margin-bottom:8px;">
+            <div class="input-row" style="margin-bottom:8px;margin-top:4px;">
                 <div class="input-group">
                     <label>农历月</label>
                     <select id="lrMonth"></select>
@@ -2215,68 +2214,122 @@
         const day = parseInt(document.getElementById('lrDay').value);
         const hour = parseInt(document.getElementById('lrHour').value);
 
-        // 小六壬六宫掌诀
+        // 江氏小六壬 六宫
         const LIUREN = ['大安','留连','速喜','赤口','小吉','空亡'];
-        const LR_WX = {'大安':'木','留连':'水','速喜':'火','赤口':'金','小吉':'水','空亡':'土'};
-        const LR_MEANING = {
-            '大安':'青龙，木。身不动时，主长期缓中向好，诸事安稳，进展较慢但吉利。宜守不宜攻。',
-            '留连':'玄武，水。卒未归时，主反复纠缠、停滞不前、事难成就。凡事需耐心等待转机。',
-            '速喜':'朱雀，火。人便至时，主突发惊喜或惊吓，火雷之象，喜事来临极快。',
-            '赤口':'白虎，金。官事凶时，主口舌是非、官司血光、金属利器之伤。最凶之位需格外小心。',
-            '小吉':'六合，水。人来喜时，主起步阶段、基础合格、成中有缺。凡事有利但莫贪大。',
-            '空亡':'勾陈，土。音信稀时，主谋事落空、钱财投资损失。对灵感玄学反而有利。'
+        const LR_WX = {'大安':'木','留连':'水','速喜':'火','赤口':'金','小吉':'木','空亡':'土'};
+        const LR_NUM = {'大安':[1,4,7],'留连':[2,5,8],'速喜':[3,6,9],'赤口':[1,4,7],'小吉':[2,5,8],'空亡':[3,6,9]};
+        const LR_KJ = {
+            '大安':'大安事事昌，求财在坤方，失物去不远，宅舍保安康。',
+            '留连':'留连事难成，求谋日不明，官事宜迟缓，去者未回程。',
+            '速喜':'速喜喜来临，求财向南行，失物申午见，行人路上寻。',
+            '赤口':'赤口主口舌，官非切宜防，失物急去寻，行人有惊慌。',
+            '小吉':'小吉最吉昌，路上好商量，阳人来报喜，失物在坤方。',
+            '空亡':'空亡事不长，阴人多乖张，求财无利益，行人有灾殃。'
         };
-        const STAGE = ['起因','过程','结果'];
+        // 六神：青龙朱雀勾陈白虎玄武腾蛇
+        const LIUSHEN = ['青龙','朱雀','勾陈','白虎','玄武','腾蛇'];
+        const LS_MEANING = {'青龙':'喜庆姻缘','朱雀':'口舌文书','勾陈':'争斗官讼','白虎':'凶灾血光','玄武':'暗昧盗贼','腾蛇':'虚惊怪异'};
+        // 五星：木火土金水天空
+        const WUXING_STAR = ['木星','火星','土星','金星','水星','天空'];
 
-        // 三轮起课：月上起日，日上起时（六宫循环）
+        // 三轮起课
         let r1 = (month - 1) % 6;
         let r2 = (r1 + day - 1) % 6;
         let r3 = (r2 + hour - 1) % 6;
         let stages = [
-            {pos:r1, name:LIUREN[r1], wx:LR_WX[LIUREN[r1]], meaning:LR_MEANING[LIUREN[r1]]},
-            {pos:r2, name:LIUREN[r2], wx:LR_WX[LIUREN[r2]], meaning:LR_MEANING[LIUREN[r2]]},
-            {pos:r3, name:LIUREN[r3], wx:LR_WX[LIUREN[r3]], meaning:LR_MEANING[LIUREN[r3]]}
+            {pos:r1, name:LIUREN[r1], wx:LR_WX[LIUREN[r1]]},
+            {pos:r2, name:LIUREN[r2], wx:LR_WX[LIUREN[r2]]},
+            {pos:r3, name:LIUREN[r3], wx:LR_WX[LIUREN[r3]]}
         ];
 
-        // 五行生克分析
+        // 六神：按时辰地支起青龙
+        // 子午大安起青龙，丑未留连起青龙，寅申速喜起青龙，卯酉赤口起青龙，辰戌小吉起青龙，巳亥空亡起青龙
+        const LS_START = {0:0,6:0, 1:1,7:1, 2:2,8:2, 3:3,9:3, 4:4,10:4, 5:5,11:5}; // hourZhi → 青龙起始宫位
+        let hzIdx = (hour - 1) % 12; // hour number 1-12 → 地支 index 0-11
+        let lsStart = LS_START[hzIdx] || 0;
+        let liushenMap = {};
+        for (let i = 0; i < 6; i++) {
+            liushenMap[(lsStart + i) % 6] = LIUSHEN[i];
+        }
+
+        // 五星：日宫起木星
+        let wxingMap = {};
+        for (let i = 0; i < 6; i++) {
+            wxingMap[(r2 + i) % 6] = WUXING_STAR[i];
+        }
+
+        // 五行生克工具
         const WX_GEN = {木:'火',火:'土',土:'金',金:'水',水:'木'};
         const WX_KE = {木:'土',土:'水',水:'火',火:'金',金:'木'};
         function wxRel(a, b) {
-            if (a === b) return ['同','比和相助'];
-            if (WX_GEN[a] === b) return ['生','付出/输出'];
-            if (WX_GEN[b] === a) return ['生','贵人相助'];
-            if (WX_KE[a] === b) return ['克','得财/掌控'];
-            if (WX_KE[b] === a) return ['克','受制/阻力'];
-            return ['',''];
+            if (a === b) return '比和';
+            if (WX_GEN[a] === b) return '我生';
+            if (WX_GEN[b] === a) return '生我';
+            if (WX_KE[a] === b) return '我克';
+            if (WX_KE[b] === a) return '克我';
+            return '';
         }
-        let wx12 = wxRel(stages[0].wx, stages[1].wx);
-        let wx23 = wxRel(stages[1].wx, stages[2].wx);
-        let wx13 = wxRel(stages[0].wx, stages[2].wx);
 
         let wxCls = c => WX_CLASS[LR_WX[c]] || '';
+        let final = stages[2];
+        let lsFinal = liushenMap[r3] || '';
+        let wxFinal = wxingMap[r3] || '';
 
-        let html = '<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">';
-        stages.forEach((s, i) => {
-            html += '<div style="background:#0f0f14;border:1px solid #1f1f24;border-radius:10px;padding:12px 16px;text-align:center;min-width:110px;">' +
-                '<div style="color:#888;font-size:11px;margin-bottom:4px;">' + STAGE[i] + '</div>' +
-                '<div style="font-size:22px;font-weight:bold;margin-bottom:4px;"><span class="' + wxCls(s.name) + '">' + s.name + '</span></div>' +
-                '<div style="font-size:11px;color:#888;">' + s.wx + '</div>' +
+        // 日加时组合断
+        let dayHourCombo = stages[1].name + '+' + final.name;
+        let comboDuan = '';
+        if (dayHourCombo === '大安+大安') comboDuan = '诸事安稳，静候佳音。';
+        else if (dayHourCombo === '大安+留连') comboDuan = '办事不周全，失物西北去，婚姻晚几天。';
+        else if (dayHourCombo === '大安+速喜') comboDuan = '事事自己起，失物当日见，婚姻自己提。';
+        else if (dayHourCombo === '大安+赤口') comboDuan = '口舌是非扰，宜退不宜进。';
+        else if (dayHourCombo === '大安+小吉') comboDuan = '大吉昌顺，出行见喜，万事和合。';
+        else if (dayHourCombo === '大安+空亡') comboDuan = '先安后乱，计划落空，宜再谋。';
+        else if (dayHourCombo === '留连+速喜') comboDuan = '暗昧转明，迟中有快，终能成就。';
+        else if (dayHourCombo === '留连+赤口') comboDuan = '拖延生口舌，凡事多阻碍。';
+        else if (dayHourCombo === '留连+小吉') comboDuan = '反复终得和合，宜耐心等待。';
+        else if (dayHourCombo === '速喜+速喜') comboDuan = '喜事连连，速战速决，大利南方。';
+        else if (dayHourCombo === '速喜+赤口') comboDuan = '喜悦中藏凶险，乐极生悲宜谨慎。';
+        else if (dayHourCombo === '速喜+小吉') comboDuan = '喜上加喜，诸事顺遂，出行大利。';
+        else if (dayHourCombo === '赤口+空亡') comboDuan = '凶多吉少，宜守不宜攻，防损失。';
+        else comboDuan = '需结合六宫六神综合判断。';
+
+        // 构建 HTML
+        let html = '';
+        // 三段卡片
+        html += '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">';
+        ['月','日','时'].forEach((label, i) => {
+            let s = stages[i];
+            html += '<div style="background:#0f0f14;border:1px solid #1f1f24;border-radius:10px;padding:10px 14px;text-align:center;min-width:90px;">' +
+                '<div style="color:#666;font-size:10px;margin-bottom:3px;">' + label + '落</div>' +
+                '<div style="font-size:20px;font-weight:bold;"><span class="' + wxCls(s.name) + '">' + s.name + '</span></div>' +
+                '<div style="font-size:10px;color:#888;">' + s.wx + ' · ' + (LR_NUM[s.name]||[]).join('/') + '</div>' +
                 '</div>';
         });
         html += '</div>';
 
-        // 最终结果
-        let final = stages[2];
-        html += '<div style="font-size:20px;color:#ffd700;margin-bottom:8px;text-align:center;">' +
-            '<span class="' + wxCls(final.name) + '">' + final.name + '</span></div>';
-        html += '<div style="color:#c0c0c0;font-size:14px;line-height:1.7;text-align:center;margin-bottom:12px;">' + final.meaning + '</div>';
+        // 最终结果 + 六神 + 五星
+        html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;">';
+        html += '<div style="background:#0f0f14;border:1px solid #1f1f24;border-radius:8px;padding:8px 14px;text-align:center;">' +
+            '<div style="color:#888;font-size:10px;">六神</div><div style="color:#87ceeb;font-size:14px;font-weight:bold;">' + lsFinal + '</div>' +
+            '<div style="color:#666;font-size:10px;">' + (LS_MEANING[lsFinal]||'') + '</div></div>';
+        html += '<div style="background:#0f0f14;border:1px solid #1f1f24;border-radius:8px;padding:8px 14px;text-align:center;">' +
+            '<div style="color:#888;font-size:10px;">五星</div><div style="color:#ffd700;font-size:14px;font-weight:bold;">' + wxFinal + '</div></div>';
+        html += '<div style="background:#0f0f14;border:1px solid #1f1f24;border-radius:8px;padding:8px 14px;text-align:center;">' +
+            '<div style="color:#888;font-size:10px;">日+时</div><div style="color:#c0c0c0;font-size:13px;">' + dayHourCombo + '</div></div>';
+        html += '</div>';
 
-        // 五行分析
-        html += '<div style="background:#0c0c10;border:1px solid #1f1f24;border-radius:8px;padding:10px 14px;font-size:12px;color:#999;line-height:1.8;">';
-        html += '<div style="color:#888;margin-bottom:4px;">五行生克分析</div>';
-        html += '起因→过程：' + stages[0].wx + wx12[0] + stages[1].wx + '（' + wx12[1] + '）<br>';
-        html += '过程→结果：' + stages[1].wx + wx23[0] + stages[2].wx + '（' + wx23[1] + '）<br>';
-        html += '起因→结果：' + stages[0].wx + wx13[0] + stages[2].wx + '（' + wx13[1] + '）';
+        // 口诀
+        html += '<div style="background:#0c0c10;border:1px solid #1f1f24;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:#c0b090;text-align:center;line-height:1.6;">' + LR_KJ[final.name] + '</div>';
+
+        // 日加时断
+        html += '<div style="background:#0c0c10;border:1px solid #1f1f24;border-radius:8px;padding:8px 14px;margin-bottom:8px;font-size:12px;color:#999;text-align:center;">' +
+            '<span style="color:#888;">日加时断：</span>' + comboDuan + '</div>';
+
+        // 五行生克
+        html += '<div style="background:#0c0c10;border:1px solid #1f1f24;border-radius:8px;padding:8px 14px;font-size:11px;color:#888;line-height:1.8;text-align:center;">';
+        html += '月' + stages[0].wx + '→日' + stages[1].wx + ' ' + wxRel(stages[0].wx, stages[1].wx) + '　';
+        html += '日' + stages[1].wx + '→时' + stages[2].wx + ' ' + wxRel(stages[1].wx, stages[2].wx) + '　';
+        html += '月' + stages[0].wx + '→时' + stages[2].wx + ' ' + wxRel(stages[0].wx, stages[2].wx);
         html += '</div>';
 
         document.getElementById('liurenResult').innerHTML = html;
