@@ -91,7 +91,7 @@
         }
 
         /* 十二宫格 */
-        .zwds-chart { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 2px; width: 100%; max-width: 500px; margin: 0 auto; }
+        .zwds-chart { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 3px; width: 100%; max-width: 520px; margin: 0 auto; }
         .palace {
             border:1px solid #1f1f24;padding:10px 8px;text-align:center;
             background:linear-gradient(180deg,#0e0e12,#0a0a0e);min-height:120px;position:relative;
@@ -99,16 +99,17 @@
         }
         .palace:hover { background:linear-gradient(180deg,#121216,#0e0e12);border-color:#2a241e; }
         .palace.ming { background:linear-gradient(180deg,#18181c,#121216);border-color:#c0a060;box-shadow:inset 0 0 20px rgba(200,160,80,0.06); }
-        .palace-title { font-size:12px;color:#888;margin-bottom:6px;font-weight:bold;letter-spacing:1px; }
-        .palace-stars { font-size:11px;line-height:1.5; }
+        .palace-title { font-size:11px;color:#777;margin-bottom:6px;font-weight:bold;letter-spacing:1px; }
+        .palace-stars { font-size:11px;line-height:1.6; }
+        .palace-dizhi { font-size:10px;color:#444; }
         .star-main { color:#e8d5b0;font-weight:bold; }
         .star-good { color:#b0b0b0; }
         .star-bad { color:#777; }
         .star-four { font-weight:bold; }
-        .star-ke { color:#8090d0; }
-        .star-quan { color:#b0a090; }
-        .star-lu { color:#a0a0a0; }
-        .star-ji { color:#d06050; }
+        .star-ke { color:#6ab4ff; }
+        .star-quan { color:#c77dff; }
+        .star-lu { color:#5aad5a; }
+        .star-ji { color:#e04040; }
 
         /* 宫位位置 */
         .p1 { grid-column: 4; grid-row: 1; }
@@ -128,7 +129,6 @@
             display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:12px;
             border:1px solid #1a1a20;border-radius:4px;
         }
-        .zwds-chart { gap:2px; }
 
         /* 解读区域 */
         .interpretation {
@@ -1551,7 +1551,7 @@
                 <div class="palace ${gridClasses[i]} ${isMing ? 'ming' : ''}">
                     <div class="palace-title">${palaceName}${isShen ? '(身)' : ''}</div>
                     <div class="palace-stars">${starsHtml || '无主星'}</div>
-                    <div style="font-size:10px;color:#666;">${DIZHI[fixedPos]}宫</div>
+                    <div class="palace-dizhi">${DIZHI[fixedPos]}</div>
                 </div>
             `;
         }
