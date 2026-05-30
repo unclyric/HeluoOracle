@@ -1187,7 +1187,7 @@
 
     // 安天府星（紫微在寅→天府在辰，紫微每移一宫天府同向移一宫）
     function anTianfuPos(ziweiPos) {
-        return (ziweiPos + 2) % 12;
+        return (ziweiPos - 4 + 12) % 12;
     }
 
     // 安十四主星
@@ -1440,13 +1440,14 @@
         const yearGan = yearGanZhi.charAt(0);
         const yearZhi = yearGanZhi.charAt(1);
 
-        // 计算五行局数
-        const ju = getJuNumber(yearGanZhi);
-        const wuxing = WUXING_JU[yearGanZhi] ? WUXING_JU[yearGanZhi][0] : '土';
-
         // 计算命宫身宫位置（用农历月）
         const mingPos = calcMingGongPos(lunarMonth, hour);
         const shenPos = calcShenGongPos(lunarMonth, hour);
+
+        // 五行局：以命宫纳音（年干+命宫地支）为准
+        const mingGanZhi = yearGan + DIZHI[mingPos];
+        const ju = WUXING_JU[mingGanZhi] ? WUXING_JU[mingGanZhi][1] : 5;
+        const wuxing = WUXING_JU[mingGanZhi] ? WUXING_JU[mingGanZhi][0] : '土';
 
         // 计算紫微天府位置（用农历日）
         const ziweiPos = anZiweiStar(ju, lunarDay);
