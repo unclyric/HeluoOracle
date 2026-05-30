@@ -2,33 +2,94 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>河洛天衍</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Microsoft YaHei', 'SimHei', sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        h1 { text-align: center; color: #ffffff; margin-bottom: 5px; font-size: 2em; letter-spacing: 8px; }
-        h2 { color: #ffffff; margin: 15px 0 10px; border-bottom: 1px solid #444; padding-bottom: 5px; }
+        body {
+            font-family: 'PingFang SC','Microsoft YaHei','SimHei',sans-serif;
+            background:#07070b;color:#d0d0d0;min-height:100vh;
+        }
+        /* 背景层：柔光 + 暗纹 */
+        body::after {
+            content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+            background:
+                /* 极光渐变 */
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(160,130,80,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(120,100,60,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 50% at 50% 40%, rgba(100,80,50,0.02) 0%, transparent 60%),
+                /* 细点阵纹理 */
+                radial-gradient(circle 1px, rgba(180,150,100,0.06) 1px, transparent 1px);
+            background-size:100% 100%,100% 100%,100% 100%,24px 24px;
+        }
+        /* 祥云 + 远山装饰 */
+        body::before {
+            content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.028;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3E%3Cdefs%3E%3ClinearGradient id='fg' x1='0%25' y1='100%25' x2='0%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23c8b088' stop-opacity='0.3'/%3E%3Cstop offset='100%25' stop-color='%23c8b088' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='none' stroke='%23c8b088' stroke-width='0.6'%3E%3Cpath d='M120 80c-15-8-35-5-42 8-5 10-2 22 8 28 3 2 8 3 12 1 6-2 10-8 10-15v-8c0-6-4-11-10-14zm22 4c-3 8-1 18 5 24 8 8 20 10 30 5 8-4 12-14 10-22-2-8-10-14-18-14-8 0-16 4-20 10zm-60 30c-10-5-22-3-28 6-5 7-3 17 3 23 4 3 9 4 14 1 5-2 8-7 8-13l-1-6c-1-5-5-9-10-11z'/%3E%3Cpath d='M620 120c-12-6-28-3-35 8-5 9-3 20 7 26 4 2 8 3 12 1 6-2 10-8 10-15v-7c0-6-5-12-11-14zm18 5c-2 8 0 17 6 23 7 7 18 9 26 4 7-4 10-13 8-20-2-8-9-14-17-14-7 0-15 4-19 10zm-50 28c-8-4-20-2-25 6-4 6-2 16 4 20 3 2 8 3 12 1 5-2 8-7 8-12l-1-6c-1-5-5-9-10-11z'/%3E%3Cpath d='M300 500c-14-7-32-4-40 9-5 9-3 22 8 28 4 2 9 3 13 1 6-2 10-9 10-16v-8c0-7-5-13-11-15zm20 4c-3 8-1 18 5 24 8 8 20 10 30 5 8-4 12-14 10-22-2-8-10-14-18-14-8 0-16 4-20 10z'/%3E%3Cpath d='M680 380c-10-5-22-3-28 6-5 7-3 17 3 23 4 3 9 4 14 1 5-2 8-7 8-13l-1-6c-1-5-5-9-10-11z'/%3E%3Cpath d='M920 200c-18-10-42-5-50 10-6 12-3 27 10 34 5 2 10 3 15 1 7-3 12-10 12-18v-9c0-7-5-14-12-17z'/%3E%3Cpath d='M80 350c-8-4-18-2-22 5-3 5-1 13 3 17 3 2 7 3 10 1 4-2 6-6 6-10v-5c0-4-2-7-6-9z'/%3E%3C/g%3E%3C!-- 远山轮廓 --%3E%3Cpath d='M0 750 Q100 680 200 720 Q300 660 400 700 Q500 640 600 690 Q700 650 800 680 Q900 620 1000 670 Q1100 630 1200 660 L1200 800 L0 800 Z' fill='url(%23fg)' stroke='none' opacity='0.5'/%3E%3Cpath d='M0 770 Q150 720 300 750 Q450 700 600 740 Q750 710 900 730 Q1050 690 1200 720 L1200 800 L0 800 Z' fill='url(%23fg)' stroke='none' opacity='0.3'/%3E%3C/svg%3E");
+            background-size:cover;background-position:bottom;background-repeat:no-repeat;
+        }
+        /* 星光点 */
+        @keyframes twinkle { 0%,100%{opacity:0.2} 50%{opacity:0.7} }
+        .star-dot { position:fixed;width:1px;height:1px;background:#c8b080;border-radius:50%;pointer-events:none;z-index:0; }
+        .star-dot:nth-child(1){top:8%;left:12%;animation:twinkle 3s infinite}
+        .star-dot:nth-child(2){top:15%;left:78%;animation:twinkle 4s infinite 0.5s}
+        .star-dot:nth-child(3){top:22%;left:35%;animation:twinkle 5s infinite 1s}
+        .star-dot:nth-child(4){top:5%;left:55%;animation:twinkle 3.5s infinite 0.3s}
+        .star-dot:nth-child(5){top:18%;left:65%;animation:twinkle 4.5s infinite 1.5s}
+        .star-dot:nth-child(6){top:28%;left:20%;animation:twinkle 2.8s infinite 0.8s}
+        .star-dot:nth-child(7){top:10%;left:90%;animation:twinkle 3.2s infinite 2s}
+        .star-dot:nth-child(8){top:25%;left:48%;animation:twinkle 5.5s infinite 0.2s}
+        .container { max-width:1400px;margin:0 auto;padding:20px;position:relative;z-index:1; }
+        h1 {
+            text-align:center;margin-bottom:4px;font-size:2.8em;letter-spacing:8px;
+            font-family:'Ma Shan Zheng','ZCOOL KuaiLe','STKaiti','KaiTi',cursive;
+            font-weight:400;
+            background:linear-gradient(180deg,#f0e0c0 0%,#d4b888 40%,#c0a068 100%);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            background-clip:text;
+            text-shadow:none;
+        }
+        h2 {
+            color:#d8c8a8;margin:15px 0 10px;border-bottom:1px solid #2a2a2a;padding-bottom:6px;
+            font-size:1.15em;letter-spacing:1px;
+        }
 
         /* 输入区域 */
-        .input-section { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-bottom: 20px; margin-top: 20px; }
+        .input-section {
+            background: linear-gradient(180deg, #111114 0%, #0e0e11 100%);
+            border:1px solid #25252a;border-radius:12px;padding:20px;margin-bottom:20px;margin-top:20px;
+            box-shadow:0 2px 12px rgba(0,0,0,0.3);
+        }
         .input-row { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-bottom: 15px; }
         .input-group { display: flex; flex-direction: column; }
         .input-group label { color: #999; margin-bottom: 5px; font-size: 14px; }
-        .input-group input, .input-group select { padding: 8px 12px; border: 1px solid #444; border-radius: 5px; background: #1a1a1a; color: #e0e0e0; font-size: 14px; }
-        .input-group input[type="time"] { padding: 8px 12px; border: 1px solid #444; border-radius: 5px; background: #1a1a1a; color: #e0e0e0; font-size: 14px; }
-        .btn { padding: 10px 25px; background: #ffffff; border: none; border-radius: 5px; color: #000000; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s; }
-        .btn:hover { background: #cccccc; transform: translateY(-2px); }
-        .btn-secondary { background: #333; color: #fff; }
-        .btn-secondary:hover { background: #555; }
+        .input-group input, .input-group select {
+            padding:8px 12px;border:1px solid #2a2a30;border-radius:6px;
+            background:#16161a;color:#d0d0d0;font-size:14px;transition:border-color 0.2s;
+        }
+        .input-group input[type="time"] { padding:8px 12px;border:1px solid #2a2a30;border-radius:6px;background:#16161a;color:#d0d0d0;font-size:14px; }
+        .input-group input:focus, .input-group select:focus { border-color:#5a5040;outline:none; }
+        .btn {
+            padding:10px 28px;background:linear-gradient(180deg,#e8d5b0,#d4c098);border:none;
+            border-radius:6px;color:#1a1a1a;cursor:pointer;font-size:15px;font-weight:bold;
+            transition:all 0.3s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+            box-shadow:0 2px 6px rgba(0,0,0,0.3);
+        }
+        .btn:hover { background:linear-gradient(180deg,#f0e0c0,#dcc8a0);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.4); }
+        .btn-secondary { background:#222;color:#c0b090;border:1px solid #333; }
+        .btn-secondary:hover { background:#2a2a2a;color:#d8c8a8; }
 
         /* 真太阳时提示框 */
-        .solar-time-info { background: #1a1a1a; border: 1px solid #333; border-radius: 5px; padding: 8px; margin-top: 10px; font-size: 13px; color: #999; }
+        .solar-time-info { background:#16161a;border:1px solid #2a2a2a;border-radius:8px;padding:10px;margin-top:10px;font-size:13px;color:#999; }
 
         /* 命盘区域 */
         .chart-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .chart-container { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 15px; }
+        .chart-container {
+            background: linear-gradient(180deg, #111114, #0e0e11);
+            border:1px solid #25252a;border-radius:12px;padding:15px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        }
 
         /* 十二宫格 */
         .zwds-chart { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 2px; width: 100%; max-width: 500px; margin: 0 auto; }
@@ -61,7 +122,10 @@
         .center-info { grid-column: 2/4; grid-row: 2/4; background: #0a0a0a; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 12px; }
 
         /* 解读区域 */
-        .interpretation { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 15px; margin-top: 20px; margin-bottom: 20px; }
+        .interpretation {
+            background:linear-gradient(180deg,#111114,#0e0e11);border:1px solid #25252a;
+            border-radius:12px;padding:15px;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        }
         .interpretation-section { margin-bottom: 15px; }
         .interpretation-title { color: #ffffff; font-size: 16px; margin-bottom: 8px; }
         .interpretation-content { font-size: 14px; line-height: 1.6; color: #ccc; }
@@ -70,11 +134,17 @@
         .pattern-found { background: #1a1a1a; padding: 8px; border-radius: 5px; margin: 5px 0; border-left: 3px solid #fff; }
 
         /* 小六壬 */
-        .liuren-section { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-top: 20px; margin-bottom: 20px; }
-        .liuren-result { font-size: 18px; text-align: center; padding: 20px; background: #111; border: 1px solid #333; border-radius: 8px; margin-top: 15px; }
+        .liuren-section {
+            background:linear-gradient(180deg,#111114,#0e0e11);border:1px solid #25252a;
+            border-radius:12px;padding:20px;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        }
+        .liuren-result { font-size:18px;text-align:center;padding:20px;background:#0e0e11;border:1px solid #25252a;border-radius:8px;margin-top:15px; }
 
         /* 六爻起卦 */
-        .liuyao-section { background: #141414; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-top: 20px; margin-bottom: 20px; }
+        .liuyao-section {
+            background:linear-gradient(180deg,#111114,#0e0e11);border:1px solid #25252a;
+            border-radius:12px;padding:20px;margin-top:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        }
         .coin-area { display: flex; justify-content: center; gap: 30px; margin: 20px 0; flex-wrap: wrap; }
         .coin { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; transition: all 0.3s; border: 3px solid #444; user-select: none; }
         .coin.head { background: #1a1a1a; color: #fff; border-color: #666; }
@@ -111,8 +181,12 @@
         @media (max-width:900px) { .gua-table { grid-template-columns:repeat(8,1fr);gap:2px; } .gua-table-cell { padding:5px 2px; } .gua-table-cell .gt-sym { font-size:12px; } .gua-table-cell .gt-name { font-size:9px; } }
 
         /* 八字排盘 */
-        .bazi-pillar { text-align:center;background:#141414;border:1px solid #333;border-radius:10px;padding:10px 14px;min-width:105px; }
-        .bazi-label { color:#666;font-size:11px;margin-bottom:4px;border-bottom:1px solid #222;padding-bottom:3px; }
+        .bazi-pillar {
+            text-align:center;background:linear-gradient(180deg,#111114,#0e0e11);
+            border:1px solid #25252a;border-radius:10px;padding:10px 14px;min-width:105px;
+            box-shadow:0 1px 6px rgba(0,0,0,0.2);
+        }
+        .bazi-label { color:#666;font-size:11px;margin-bottom:4px;border-bottom:1px solid #1a1a1a;padding-bottom:3px; }
         .bazi-ganzhi { font-size:20px;font-weight:bold;margin:4px 0; }
         .bazi-canggan { font-size:11px;color:#888;margin:2px 0; }
         .bazi-shishen { font-size:11px;margin:2px 0;font-weight:bold; }
@@ -129,7 +203,12 @@
         .bazi-shensha-tag { font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid #333; }
 
         /* 知识库 */
-        .knowledge-section { margin-top: 20px; margin-bottom: 20px; }
+        .knowledge-section { margin-top:20px;margin-bottom:20px; }
+        /* 滚动条 */
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:#0a0a0e; }
+        ::-webkit-scrollbar-thumb { background:#2a2a30;border-radius:3px; }
+        ::-webkit-scrollbar-thumb:hover { background:#3a3a40; }
         .knowledge-tabs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
         .knowledge-tab { padding: 8px 15px; background: #1a1a1a; border: 1px solid #444; border-radius: 5px; color: #999; cursor: pointer; }
         .knowledge-tab.active { background: #fff; color: #000; border-color: #fff; }
@@ -138,7 +217,10 @@
         .star-name { color: #fff; font-weight: bold; }
 
         /* 今日面板 */
-        .today-panel { background:#111;border:1px solid #2a2a2a;border-radius:12px;padding:16px 20px;margin-bottom:20px; }
+        .today-panel {
+            background:linear-gradient(180deg,#111114,#0e0e11);border:1px solid #25252a;
+            border-radius:12px;padding:16px 20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        }
         .today-pillar { display:flex;flex-direction:column;align-items:center;min-width:60px; }
         .today-pillar-label { font-size:10px;color:#555;margin-bottom:2px; }
         .today-pillar-gan { font-size:20px;font-weight:bold; }
@@ -147,7 +229,11 @@
 
         /* 奇门遁甲 */
         .qimen-grid { display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3px;max-width:600px;margin:0 auto; }
-        .qimen-cell { background:#0d0d0d;border:1px solid #333;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.5;min-height:130px; }
+        .qimen-cell {
+            background:linear-gradient(180deg,#0f0f12,#0a0a0e);border:1px solid #222;
+            padding:10px 8px;display:flex;flex-direction:column;align-items:center;
+            justify-content:center;line-height:1.5;min-height:130px;
+        }
         .qimen-cell .qm-palace { color:#888;font-size:13px;margin-bottom:4px;border-bottom:1px solid #1a1a1a;padding-bottom:3px;width:100%;text-align:center; }
         .qimen-cell .qm-dp { font-size:14px;margin:2px 0; }
         .qimen-cell .qm-star { color:#ffd700;font-size:15px;font-weight:bold;margin:1px 0; }
@@ -160,7 +246,11 @@
         .qimen-cell .qm-ma { color:#4caf50;font-size:12px;margin:1px 0; }
 
         /* 状态栏 */
-        .status-bar { display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;background:#111;border:1px solid #2a2a2a;border-radius:10px;padding:10px 18px;margin-bottom:16px;font-size:13px; }
+        .status-bar {
+            display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
+            background:rgba(20,20,25,0.6);border:1px solid #25252a;border-radius:10px;
+            padding:10px 18px;margin-bottom:16px;font-size:13px;backdrop-filter:blur(4px);
+        }
         .status-bar input[type="text"] { padding:6px 10px;border:1px solid #444;border-radius:5px;background:#1a1a1a;color:#e0e0e0;font-size:13px;width:140px; }
         .status-bar input[type="number"] { padding:6px 8px;border:1px solid #444;border-radius:5px;background:#1a1a1a;color:#e0e0e0;font-size:13px;width:70px; }
         .status-bar label { color:#999;font-size:12px;white-space:nowrap; }
@@ -168,6 +258,80 @@
         .btn-refresh { background:none;border:1px solid #444;border-radius:50%;color:#999;cursor:pointer;font-size:16px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:all 0.3s; }
         .btn-refresh:hover { color:#fff;border-color:#fff;transform:rotate(180deg); }
         .btn-refresh:active { transform:rotate(360deg); }
+
+        /* 美术增强 */
+        @keyframes titleGlow { 0%,100%{filter:drop-shadow(0 0 25px rgba(200,160,100,0.18))} 50%{filter:drop-shadow(0 0 45px rgba(200,160,100,0.3))} }
+        h1 { animation:titleGlow 4s ease-in-out infinite;filter:drop-shadow(0 0 25px rgba(200,160,100,0.18)); }
+        /* 卡片转角装饰 */
+        .input-section,.today-panel,.liuren-section,.liuyao-section,.interpretation {
+            position:relative;
+        }
+        .input-section::before,.today-panel::after,.liuren-section::before,.liuyao-section::after,
+        .interpretation::before {
+            content:'';position:absolute;width:12px;height:12px;pointer-events:none;opacity:0.25;
+        }
+        .input-section::before { top:6px;left:6px;border-top:1px solid rgba(200,170,120,0.4);border-left:1px solid rgba(200,170,120,0.4); }
+        .liuren-section::before { top:6px;right:6px;border-top:1px solid rgba(200,170,120,0.4);border-right:1px solid rgba(200,170,120,0.4); }
+        .liuyao-section::after { bottom:6px;left:6px;border-bottom:1px solid rgba(200,170,120,0.4);border-left:1px solid rgba(200,170,120,0.4); }
+        .interpretation::before { bottom:6px;right:6px;border-bottom:1px solid rgba(200,170,120,0.4);border-right:1px solid rgba(200,170,120,0.4); }
+        h2::after { content:'';display:block;width:40px;height:2px;background:linear-gradient(90deg,rgba(200,170,120,0.6),transparent);margin-top:4px;border-radius:1px; }
+        .input-section:hover,.today-panel:hover,.liuren-section:hover,.liuyao-section:hover,
+        .interpretation:hover,.chart-container:hover { border-color:#302820;transition:border-color 0.5s; }
+        .bazi-pillar { transition:all 0.3s; }
+        .bazi-pillar:hover { border-color:#3a3028;transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.4); }
+        .qimen-cell { transition:all 0.3s; }
+        .qimen-cell:hover { border-color:#3a3028;background:linear-gradient(180deg,#141418,#0f0f14); }
+        .gua-table-cell { transition:all 0.25s; }
+        .gua-table-cell:hover { border-color:#c0a070;background:#1a1812;transform:scale(1.03);z-index:1; }
+        @keyframes floatUp { 0%{transform:translateY(0) translateX(0);opacity:0} 30%{opacity:0.5} 100%{transform:translateY(-360px) translateX(40px);opacity:0} }
+        @keyframes floatUp2 { 0%{transform:translateY(0) translateX(0);opacity:0} 20%{opacity:0.4} 100%{transform:translateY(-300px) translateX(-30px);opacity:0} }
+        @keyframes floatUp3 { 0%{transform:translateY(0) translateX(0);opacity:0} 40%{opacity:0.35} 100%{transform:translateY(-420px) translateX(20px);opacity:0} }
+        .particle { position:fixed;width:2px;height:2px;background:rgba(200,170,120,0.5);border-radius:50%;pointer-events:none;z-index:0; }
+        .particle:nth-child(1) { left:15%;bottom:-10px;animation:floatUp 8s infinite; }
+        .particle:nth-child(2) { left:35%;bottom:-10px;animation:floatUp2 10s infinite;animation-delay:2s;width:1px;height:3px; }
+        .particle:nth-child(3) { left:55%;bottom:-10px;animation:floatUp3 9s infinite;animation-delay:4s; }
+        .particle:nth-child(4) { left:75%;bottom:-10px;animation:floatUp 11s infinite;animation-delay:1s;width:1px;height:1px; }
+        .particle:nth-child(5) { left:25%;bottom:-10px;animation:floatUp2 7s infinite;animation-delay:5s;width:3px;height:1px; }
+        .particle:nth-child(6) { left:65%;bottom:-10px;animation:floatUp3 12s infinite;animation-delay:3s; }
+        .particle:nth-child(7) { left:85%;bottom:-10px;animation:floatUp 9s infinite;animation-delay:6s;width:2px;height:2px; }
+        .particle:nth-child(8) { left:45%;bottom:-10px;animation:floatUp2 8s infinite;animation-delay:7s; }
+        .today-panel { position:relative;overflow:hidden; }
+        .today-panel::before { content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,rgba(200,170,120,0.15),transparent); }
+        .btn { position:relative;overflow:hidden; }
+        .btn:active::after { content:'';position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;background:rgba(255,255,255,0.2);transform:translate(-50%,-50%);animation:ripple 0.6s ease-out; }
+        @keyframes ripple { to { width:300px;height:300px;opacity:0; } }
+        .lang-toggle { box-shadow:0 2px 8px rgba(0,0,0,0.4); }
+        .lang-toggle button:not(.active):hover { color:#c0b090; }
+        .knowledge-tab { transition:all 0.25s;border-radius:6px; }
+        .knowledge-tab:hover:not(.active) { border-color:#444;color:#c0b090; }
+        /* 页边暗角 */
+        .vignette { position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
+            background:radial-gradient(ellipse at center,transparent 60%,rgba(4,4,6,0.5) 100%); }
+        /* 面板叠影层次 */
+        .input-section,.today-panel,.liuren-section,.liuyao-section,.interpretation,.chart-container {
+            box-shadow:0 1px 3px rgba(0,0,0,0.4),0 4px 16px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.01);
+        }
+        /* 装饰分隔线 */
+        .section-divider { width:100%;max-width:200px;margin:6px auto 12px;height:1px;
+            background:linear-gradient(90deg,transparent,rgba(180,150,110,0.25),transparent);position:relative; }
+        .section-divider::after { content:'◆';position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+            color:rgba(180,150,110,0.3);font-size:8px; }
+        /* 金尘闪烁 */
+        @keyframes goldDust { 0%,100%{opacity:0;transform:scale(0)} 50%{opacity:0.7;transform:scale(1)} }
+        .gold-dust { position:fixed;width:2px;height:2px;background:#d4b888;border-radius:50%;pointer-events:none;z-index:0; }
+        .gold-dust:nth-child(1){top:12%;left:8%;animation:goldDust 6s infinite}
+        .gold-dust:nth-child(2){top:32%;left:92%;animation:goldDust 8s infinite 1s}
+        .gold-dust:nth-child(3){top:55%;left:5%;animation:goldDust 7s infinite 2s}
+        .gold-dust:nth-child(4){top:70%;left:88%;animation:goldDust 9s infinite 0.5s}
+        .gold-dust:nth-child(5){top:42%;left:82%;animation:goldDust 5s infinite 3s}
+        .gold-dust:nth-child(6){top:80%;left:15%;animation:goldDust 7.5s infinite 1.5s}
+        /* 内发光卡片 */
+        .today-panel { box-shadow:0 1px 3px rgba(0,0,0,0.4),0 4px 16px rgba(0,0,0,0.25),inset 0 0 30px rgba(180,150,110,0.02); }
+        .qimen-cell:hover { box-shadow:inset 0 0 20px rgba(180,150,110,0.04); }
+        /* 渐变底色微动 */
+        /* 背景光缓慢漂移 */
+        @keyframes bgShift { 0%,100%{opacity:0.8} 50%{opacity:1} }
+        body::after { animation:bgShift 20s ease-in-out infinite; }
 
         /* 响应式 */
         @media (max-width: 900px) {
@@ -177,10 +341,29 @@
     </style>
 </head>
 <body>
+    <div class="star-dot"></div><div class="star-dot"></div><div class="star-dot"></div><div class="star-dot"></div>
+    <div class="star-dot"></div><div class="star-dot"></div><div class="star-dot"></div><div class="star-dot"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="gold-dust"></div><div class="gold-dust"></div><div class="gold-dust"></div>
+    <div class="gold-dust"></div><div class="gold-dust"></div><div class="gold-dust"></div>
+    <div class="vignette"></div>
     <div class="container">
+        <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px;">
+            <span style="width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(200,170,120,0.4));"></span>
+            <span style="color:#5a4a35;font-size:10px;">&#9670;</span>
+            <span style="width:60px;height:1px;background:linear-gradient(270deg,transparent,rgba(200,170,120,0.4));"></span>
+        </div>
         <h1>河洛天衍</h1>
-        <p style="text-align:center;color:#87ceeb;margin-bottom:5px;font-size:14px;letter-spacing:4px;">大道五十 天衍四九</p>
-        <p style="text-align:center;color:#87ceeb;margin-bottom:20px;">By Roseric</p>
+        <p style="text-align:center;color:#9a8a70;margin-bottom:5px;font-size:14px;letter-spacing:4px;">大道五十 天衍四九</p>
+        <p style="text-align:center;color:#7a6a55;margin-bottom:8px;">By Roseric</p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;">
+            <span style="width:30px;height:1px;background:rgba(200,170,120,0.3);"></span>
+            <span style="width:4px;height:4px;background:rgba(200,170,120,0.5);transform:rotate(45deg);"></span>
+            <span style="width:80px;height:1px;background:linear-gradient(90deg,rgba(200,170,120,0.4),rgba(200,170,120,0.05));"></span>
+            <span style="width:4px;height:4px;background:rgba(200,170,120,0.3);transform:rotate(45deg);"></span>
+            <span style="width:30px;height:1px;background:rgba(200,170,120,0.2);"></span>
+        </div>
 
         <!-- 今日日期面板 -->
         <div class="today-panel" id="todayPanel">
@@ -198,7 +381,7 @@
 
         <!-- 小六壬 -->
         <div class="liuren-section">
-            <h2>小六壬速断</h2>
+            <h2>小六壬速断 <span style="font-size:11px;color:#4a4035;font-weight:normal;float:right;margin-top:2px;">知命不惧 日日自新</span></h2>
             <p style="color:#aaa;font-size:13px;">以当下心血来潮之时测算单件事情，按农历月日时推算</p>
             <div class="input-row">
                 <div class="input-group">
@@ -2897,5 +3080,6 @@
     }
 
     </script>
+    <div style="text-align:center;padding:24px 12px 28px;color:#2a2520;font-size:11px;letter-spacing:1px;">泽无水，困。君子以致命遂志。</div>
 </body>
 </html>
