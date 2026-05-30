@@ -430,7 +430,7 @@
         <!-- 小六壬 -->
         <div class="liuren-section">
             <h2>小六壬速断 <span style="font-size:11px;color:#4a4035;font-weight:normal;float:right;margin-top:2px;">知命不惧 日日自新</span></h2>
-            <p style="color:#aaa;font-size:13px;">道门秘传九宫小六壬 · 月上起日 · 日上起时 · 三轮定课 · 五行生克断吉凶</p>
+            <p style="color:#aaa;font-size:13px;">月上起日，日上起时，五行生克断吉凶</p>
             <div class="input-row">
                 <div class="input-group">
                     <label>农历月</label>
@@ -2245,12 +2245,6 @@
                 '</div>';
         });
         html += '</div>';
-
-        // 最终结果
-        let final = stages[2];
-        html += '<div style="font-size:20px;color:#ffd700;margin-bottom:8px;text-align:center;">' +
-            '课位：<span class="' + wxCls(final.name) + '">' + final.name + '</span></div>';
-        html += '<div style="color:#c0c0c0;font-size:14px;line-height:1.7;text-align:center;margin-bottom:12px;">' + final.meaning + '</div>';
 
         // 五行分析
         html += '<div style="background:#0c0c10;border:1px solid #1f1f24;border-radius:8px;padding:10px 14px;font-size:12px;color:#999;line-height:1.8;">';
