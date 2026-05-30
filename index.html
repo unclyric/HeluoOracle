@@ -2750,25 +2750,25 @@
             dp[pal] = yiList[i];
         }
 
-        // 时柱旬首
+        // 时柱旬首 → 六仪映射（甲子戊、甲戌己、甲申庚、甲午辛、甲辰壬、甲寅癸）
         let xs = hourGZIdx - (hourGZIdx % 10);
-        let xsGanIdx = xs % 10, xsZhiIdx = xs % 12;
-        let xsZhi = DIZHI[xsZhiIdx];
+        let xsZhiIdx = xs % 12;
+        let xsYiMap = {0:'戊', 10:'己', 20:'庚', 30:'辛', 40:'壬', 50:'癸'};
+        let xsYiTarget = xsYiMap[xs] || '戊';
 
-        // 值符星
-        let xsYi = null, xsPal = null;
+        // 值符星：找旬首六仪在地盘的位置
+        let xsPal = null;
         for (let pal = 1; pal <= 9; pal++) {
-            let yi = dp[pal] || '';
-            if (yi === TIANGAN[xsGanIdx]) { xsYi = yi; xsPal = pal; break; }
+            if (dp[pal] === xsYiTarget) { xsPal = pal; break; }
         }
-        if (!xsYi) { xsYi = '戊'; xsPal = ju; }
+        if (!xsPal) xsPal = ju;
+        if (xsPal === 5) xsPal = 2; // 中五寄坤
         let zhifuStar = QM_STARS[xsPal - 1] || '天禽';
 
         // 值使门
         let xsHourDiff = (hourZhiIdx - xsZhiIdx + 12) % 12;
-        // 值使落宫
-        let doorStartPal = isYang ? xsPal : xsPal;
-        let zhishiPal = ((doorStartPal - 1 + xsHourDiff) % 9) + 1;
+        let zhishiPal = ((xsPal - 1 + xsHourDiff) % 9) + 1;
+        if (zhishiPal === 5) zhishiPal = 2;
 
         // 时干落宫
         let shiGanPal = null;
@@ -2859,27 +2859,30 @@
             let agan = ag[pal] || '';
             let agCls = WX_CLASS[GAN_WX[agan]] || '';
 
+            // 击刑/入墓 对天盘奇仪和地盘奇仪的颜色标记
+            let tpJX = false, tpRM = false, dpJX = false, dpRM = false;
+            if (tpyi) { tpJX = qimenJiXing(tpyi, pal); tpRM = qimenRuMu(tpyi, pal); }
+            if (dpyi) { dpJX = qimenJiXing(dpyi, pal); dpRM = qimenRuMu(dpyi, pal); }
+            // 天干色：击刑=紫色，入墓+击刑=蓝色，否则按五行
+            let tpYiCls = (tpJX && tpRM) ? 'qm-jxrm' : (tpJX ? 'qm-jx' : tyCls);
+            let dpYiCls = (dpJX && dpRM) ? 'qm-jxrm' : (dpJX ? 'qm-jx' : dpxCls);
+
             // Palace header
             cells.push('<div class="qm-palace">' + QM_NAMES[pal] + '宫 ' + (QM_DZ[pal]||'中') + '</div>');
-            // Star + heaven yi
-            cells.push('<div class="qm-star">' + star + ' <span class="' + tyCls + '">' + tpyi + '</span></div>');
+            // Star + heaven yi (击刑=紫色天干, 入墓+击刑=蓝色天干)
+            cells.push('<div class="qm-star">' + star + ' <span class="' + tpYiCls + '">' + tpyi + '</span></div>');
             // Door
             cells.push('<div class="qm-door">' + (door || '—') + '</div>');
             // Spirit
             cells.push('<div class="qm-spirit">' + (spirit || '—') + '</div>');
-            // Earth yi
-            cells.push('<div class="qm-dp">地<span class="' + dpxCls + '">' + dpyi + '</span></div>');
+            // Earth yi (同样标记击刑/入墓色)
+            cells.push('<div class="qm-dp">地<span class="' + dpYiCls + '">' + dpyi + '</span></div>');
             // 暗干
             if (agan) cells.push('<div class="qm-ag">暗<span class="' + agCls + '">' + agan + '</span></div>');
-            // Markers
+            // 入墓/空亡/马星标签
             let markers = [];
-            if (tpyi) {
-                let jx = qimenJiXing(tpyi, pal);
-                let rm = qimenRuMu(tpyi, pal);
-                if (jx && rm) markers.push('<span class="qm-jxrm">入墓+刑</span>');
-                else if (jx) markers.push('<span class="qm-jx">击刑</span>');
-                else if (rm) markers.push('<span class="qm-jxrm">入墓</span>');
-            }
+            if (tpyi && tpRM && !tpJX) markers.push('<span class="qm-jxrm">入墓</span>');
+            if (dpyi && dpRM && !dpJX) markers.push('<span class="qm-jxrm">地入墓</span>');
             if (kwPalaces.has(pal)) markers.push('<span class="qm-kw">空亡</span>');
             if (pal === maPal) markers.push('<span class="qm-ma">马星</span>');
             if (markers.length > 0) cells.push('<div style="margin-top:3px;">' + markers.join(' ') + '</div>');
@@ -2889,7 +2892,7 @@
         document.getElementById('qimenGrid').innerHTML = gridHtml;
 
         document.getElementById('qimenLegend').innerHTML =
-            '<span style="color:#c77dff;">击刑</span> <span style="color:#5b8def;">入墓/入墓+击刑</span> <span style="color:#ff6b6b;">空亡</span> <span style="color:#4caf50;">马星</span>';
+            '<span style="color:#c77dff;">天干紫色=击刑</span> <span style="color:#5b8def;">天干蓝色=入墓+击刑</span> <span style="color:#ff6b6b;">空亡</span> <span style="color:#4caf50;">马星</span> <span style="color:#888;">入墓=蓝标</span>';
         document.getElementById('qimenResult').scrollIntoView({ behavior: 'smooth' });
     }
 
