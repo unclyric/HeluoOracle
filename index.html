@@ -568,6 +568,14 @@
             <div id="solarTimeInfo" class="solar-time-info" style="display:none;"></div>
             <button class="btn" onclick="generateChart()">排盘并解读</button>
             <button class="btn btn-secondary" onclick="calcBazi()" style="margin-left:10px;">排八字</button>
+            <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <button class="btn btn-secondary" onclick="preciseChartFromAPI()" title="使用 iztro-py 精确排盘（需先启动本地服务器 python3 scripts/server.py）">🔮 精确排盘（API）</button>
+                <label class="btn btn-secondary" style="cursor:pointer;margin:0;font-weight:normal;" title="上传 calculate_chart.py 生成的 JSON 文件">
+                    📂 导入排盘JSON
+                    <input type="file" id="chartJsonFile" accept=".json" onchange="preciseChartFromFile(this)" style="display:none;">
+                </label>
+                <span id="preciseModeBadge" style="display:none;color:#5aad5a;font-size:12px;">✅ iztro-py 精确排盘</span>
+            </div>
         </div>
 
         <!-- 命盘区域 -->
@@ -1491,6 +1499,200 @@
 
         // 格局识别
         identifyPatterns(mingPos, allStars, fourHua);
+
+        // 显示区域
+        document.getElementById('chartSection').style.display = 'grid';
+        document.getElementById('interpretationSection').style.display = 'block';
+        document.getElementById('patternSection').style.display = 'block';
+    }
+
+    // ==================== iztro-py 精确排盘 ====================
+
+    // API 服务器地址配置（本地服务器默认 8765 端口）
+    const PRECISE_API_URL = 'http://localhost:8765/api/chart';
+
+    // 从本地 API 获取精确排盘
+    async function preciseChartFromAPI() {
+        const year = parseInt(document.getElementById('birthYear').value);
+        const month = parseInt(document.getElementById('birthMonth').value);
+        const day = parseInt(document.getElementById('birthDay').value);
+        const birthTimeStr = document.getElementById('birthTime').value;
+        const gender = document.getElementById('gender').value === 'male' ? '男' : '女';
+        const birthPlaceSelect = document.getElementById('birthPlace');
+        const selectedCity = birthPlaceSelect.options[birthPlaceSelect.selectedIndex].value;
+        const cityLongitude = CITY_LONGITUDE[selectedCity] || 120;
+
+        // 计算真太阳时和时辰
+        const solarInfo = calcTrueSolarTime(birthTimeStr, cityLongitude, month, day, year);
+        const hour = getShiChenFromTime(solarInfo.trueSolarTime);
+
+        // 构建 API 请求
+        const params = new URLSearchParams({
+            solar: `${year}-${month}-${day}`,
+            hour: hour.toString(),
+            gender: gender,
+            frontend: 'true',
+        });
+
+        try {
+            document.getElementById('preciseModeBadge').style.display = 'inline';
+            document.getElementById('preciseModeBadge').textContent = '⏳ 正在计算精确排盘...';
+            document.getElementById('preciseModeBadge').style.color = '#c0a060';
+
+            const response = await fetch(`${PRECISE_API_URL}?${params.toString()}`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            const preciseData = await response.json();
+
+            if (preciseData.error) {
+                throw new Error(preciseData.error);
+            }
+
+            // 显示真太阳时信息
+            const userName = document.getElementById('userName').value.trim();
+            const isAnonymous = document.getElementById('isAnonymous').checked;
+            const displayName = isAnonymous ? '匿名' : (userName || '未填');
+
+            const solarTimeInfoEl = document.getElementById('solarTimeInfo');
+            solarTimeInfoEl.style.display = 'block';
+            solarTimeInfoEl.innerHTML =
+                `<div><b>姓名：</b>${displayName}</div>` +
+                `<div><b>公历生日：</b>${year}年${month}月${day}日</div>` +
+                `<div><b>北京时间：</b>${solarInfo.beijingTime}</div>` +
+                `<div><b>真太阳时：</b>${solarInfo.trueSolarTime}</div>` +
+                `<div><b>出生地：</b>${selectedCity}（经度 ${cityLongitude}°）</div>` +
+                `<div><b>对应时辰：</b>${DIZHI[hour]}时</div>` +
+                `<div style="color:#5aad5a;margin-top:4px;"><b>🔮 精确排盘引擎：</b>iztro-py（紫微斗数标准算法）</div>`;
+
+            // 使用精确数据展示命盘
+            displayPreciseChart(preciseData);
+
+            document.getElementById('preciseModeBadge').textContent = '✅ iztro-py 精确排盘';
+            document.getElementById('preciseModeBadge').style.color = '#5aad5a';
+        } catch (err) {
+            document.getElementById('preciseModeBadge').textContent = '❌ 精确排盘失败';
+            document.getElementById('preciseModeBadge').style.color = '#e04040';
+            alert(`精确排盘失败：${err.message}\n\n请确认：\n1. 已启动本地服务器：python3 scripts/server.py\n2. 服务器地址：${PRECISE_API_URL}\n3. iztro-py 已正确安装：pip3 install iztro-py\n\n将使用内置 JS 排盘作为替代。`);
+            // 回退到内置排盘
+            generateChart();
+        }
+    }
+
+    // 从 JSON 文件导入精确排盘
+    function preciseChartFromFile(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const preciseData = JSON.parse(e.target.result);
+
+                // 自动检测格式：如果包含 mingPos 则直接使用，否则转换
+                let displayData = preciseData;
+                if (!displayData.mingPos && preciseData.palaces && preciseData.soul_palace_branch) {
+                    // 兼容完整的 calculate_chart.py 输出格式
+                    displayData = convertFullChartToDisplay(preciseData);
+                }
+
+                if (!displayData.mingPos || !displayData.allStars) {
+                    throw new Error('JSON 格式不正确，缺少 mingPos 或 allStars 字段');
+                }
+
+                displayPreciseChart(displayData);
+                document.getElementById('preciseModeBadge').style.display = 'inline';
+                document.getElementById('preciseModeBadge').textContent = '✅ iztro-py 精确排盘（文件导入）';
+                document.getElementById('preciseModeBadge').style.color = '#5aad5a';
+
+                // 显示基本信息
+                const solarTimeInfoEl = document.getElementById('solarTimeInfo');
+                solarTimeInfoEl.style.display = 'block';
+                solarTimeInfoEl.innerHTML = `<div style="color:#5aad5a;"><b>🔮 数据来源：</b>iztro-py 精确排盘 JSON（文件导入）</div>`;
+
+            } catch (err) {
+                alert(`JSON 文件解析失败：${err.message}`);
+                document.getElementById('preciseModeBadge').textContent = '❌ 导入失败';
+                document.getElementById('preciseModeBadge').style.color = '#e04040';
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // 将完整的 calculate_chart.py 输出转换为前端显示格式
+    function convertFullChartToDisplay(fullData) {
+        const branchList = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+        const branchToIdx = {};
+        branchList.forEach((b, i) => { branchToIdx[b] = i; });
+
+        const mingBranch = fullData.soul_palace_branch;
+        const shenBranch = fullData.body_palace_branch;
+        const mingPos = branchToIdx[mingBranch] ?? 0;
+        const shenPos = branchToIdx[shenBranch] ?? 0;
+
+        const allStars = {};
+        for (const p of fullData.palaces) {
+            const idx = branchToIdx[p.earthly_branch] ?? -1;
+            if (idx === -1) continue;
+            const stars = [...(p.major_stars || []), ...(p.minor_stars || [])];
+            if (stars.length > 0) allStars[idx] = stars;
+        }
+
+        const fourHua = {};
+        for (const m of fullData.year_mutagens || []) {
+            const short = (m.mutagen || '').replace('化', '');
+            fourHua[short] = m.star;
+        }
+
+        const yearGan = fullData.year_stem || '';
+        const yearZhi = fullData.year_branch || '';
+        const laiyinMap = {'甲':10,'乙':9,'丙':8,'丁':7,'戊':6,'己':5,'庚':4,'辛':3,'壬':0,'癸':11};
+
+        return {
+            mingPos, shenPos, allStars, fourHua,
+            info: {
+                yearGanZhi: fullData.year_ganzhi || '',
+                yearGan, yearZhi,
+                ju: fullData.ju_number || 5,
+                wuxing: (fullData.five_elements || '土')[0],
+                yinyangGender: fullData.yinyang_gender || '',
+                gender: fullData.gender === '男' ? 'male' : 'female',
+                ziweiPos: branchToIdx[fullData.ziwei_branch] ?? 0,
+                tianfuPos: branchToIdx[fullData.tianfu_branch] ?? 0,
+                laiyinPos: laiyinMap[yearGan] ?? 2,
+            }
+        };
+    }
+
+    // 显示精确排盘数据（复用现有 displayChart / generateInterpretation / identifyPatterns）
+    function displayPreciseChart(preciseData) {
+        const { mingPos, shenPos, allStars, fourHua, info } = preciseData;
+
+        // 确保格式兼容
+        const compatFourHua = {};
+        if (fourHua['科']) compatFourHua['科'] = fourHua['科'];
+        if (fourHua['权']) compatFourHua['权'] = fourHua['权'];
+        if (fourHua['禄']) compatFourHua['禄'] = fourHua['禄'];
+        if (fourHua['忌']) compatFourHua['忌'] = fourHua['忌'];
+
+        // 确保 allStars 的 key 是数字
+        const compatStars = {};
+        for (const [k, v] of Object.entries(allStars)) {
+            compatStars[parseInt(k)] = v;
+        }
+
+        // 显示命盘
+        displayChart(mingPos, shenPos, compatStars, compatFourHua, info);
+
+        // 生成解读（使用现有解读引擎）
+        if (typeof generateInterpretation === 'function') {
+            generateInterpretation(mingPos, shenPos, compatStars, compatFourHua, info);
+        }
+
+        // 格局识别
+        if (typeof identifyPatterns === 'function') {
+            identifyPatterns(mingPos, compatStars, compatFourHua);
+        }
 
         // 显示区域
         document.getElementById('chartSection').style.display = 'grid';
